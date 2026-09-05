@@ -28,18 +28,10 @@ stroke.Color = Color3.fromRGB(200, 200, 200)
 stroke.Thickness = 1
 stroke.Parent = mainFrame
 
--- 标题区域（用作拖拽把手）
-local dragHandle = Instance.new("Frame")
-dragHandle.Size = UDim2.new(1, 0, 0, 45)
-dragHandle.Position = UDim2.new(0, 0, 0, 0)
-dragHandle.BackgroundTransparency = 1
-dragHandle.Parent = mainFrame
-dragHandle.ZIndex = 2
-
 -- ========== 标题（居中） ==========
 local title = Instance.new("TextLabel")
-title.Size = UDim2.new(0, 200, 0, 35)      -- 固定宽度，居中对齐
-title.Position = UDim2.new(0.5, -100, 0, 5) -- 居中偏移
+title.Size = UDim2.new(0, 200, 0, 35)
+title.Position = UDim2.new(0.5, -100, 0, 5)
 title.BackgroundTransparency = 1
 title.Text = "🍲 鸡汤脚本"
 title.TextColor3 = Color3.new(0, 0, 0)
@@ -50,7 +42,7 @@ title.Parent = mainFrame
 -- ========== 左上角设置按钮 ==========
 local settingBtn = Instance.new("TextButton")
 settingBtn.Size = UDim2.new(0, 30, 0, 30)
-settingBtn.Position = UDim2.new(0, 5, 0, 5)      -- 左上角
+settingBtn.Position = UDim2.new(0, 5, 0, 5)
 settingBtn.BackgroundColor3 = Color3.fromRGB(220, 220, 220)
 settingBtn.Text = "⚙️"
 settingBtn.TextColor3 = Color3.new(0, 0, 0)
@@ -64,7 +56,7 @@ settingBtn.Parent = mainFrame
 -- ========== 右上角缩小按钮 ==========
 local minimizeBtn = Instance.new("TextButton")
 minimizeBtn.Size = UDim2.new(0, 30, 0, 30)
-minimizeBtn.Position = UDim2.new(1, -40, 0, 5)   -- 右上角
+minimizeBtn.Position = UDim2.new(1, -40, 0, 5)
 minimizeBtn.BackgroundColor3 = Color3.fromRGB(220, 220, 220)
 minimizeBtn.Text = "—"
 minimizeBtn.TextColor3 = Color3.new(0, 0, 0)
@@ -291,6 +283,42 @@ screenGui.InputBegan:Connect(function(input)
     end
 end)
 
+-- ========== 窗口拖拽（仅限标题栏区域，Y < 45） ==========
+local dragging = false
+local dragStartPos = nil
+local startFramePos = nil
+
+mainFrame.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        -- 获取点击位置相对于 mainFrame 的 Y 坐标
+        local absPos = mainFrame.AbsolutePosition
+        local localY = input.Position.Y - absPos.Y
+        if localY < 45 then  -- 标题栏高度
+            dragging = true
+            dragStartPos = input.Position
+            startFramePos = mainFrame.Position
+        end
+    end
+end)
+
+mainFrame.InputChanged:Connect(function(input)
+    if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+        local delta = input.Position - dragStartPos
+        mainFrame.Position = UDim2.new(
+            startFramePos.X.Scale,
+            startFramePos.X.Offset + delta.X,
+            startFramePos.Y.Scale,
+            startFramePos.Y.Offset + delta.Y
+        )
+    end
+end)
+
+mainFrame.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = false
+    end
+end)
+
 -- ========== 缩小 / 展开（小鸡图标） ==========
 local miniIcon = Instance.new("TextButton")
 miniIcon.Size = UDim2.new(0, 55, 0, 55)
@@ -357,36 +385,5 @@ miniIcon.InputEnded:Connect(function(input)
         if not isDragged then
             expand()
         end
-    end
-end)
-
--- ========== 窗口拖拽（仅标题区域） ==========
-local dragging = false
-local dragStartPos = nil
-local startFramePos = nil
-
-dragHandle.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-        dragging = true
-        dragStartPos = input.Position
-        startFramePos = mainFrame.Position
-    end
-end)
-
-dragHandle.InputChanged:Connect(function(input)
-    if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-        local delta = input.Position - dragStartPos
-        mainFrame.Position = UDim2.new(
-            startFramePos.X.Scale,
-            startFramePos.X.Offset + delta.X,
-            startFramePos.Y.Scale,
-            startFramePos.Y.Offset + delta.Y
-        )
-    end
-end)
-
-dragHandle.InputEnded:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-        dragging = false
     end
 end)
