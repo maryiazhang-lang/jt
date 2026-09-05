@@ -1,4 +1,4 @@
--- 鸡汤脚本 - 纯白背景 + 脚本中心折叠（滚动列表），六开关，手机优化
+-- 鸡汤脚本 - 纯白背景 + 脚本中心折叠（滚动列表），六开关，手机优化（拖动限定标题栏）
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local UserInputService = game:GetService("UserInputService")
@@ -27,6 +27,14 @@ local stroke = Instance.new("UIStroke")
 stroke.Color = Color3.fromRGB(200, 200, 200)
 stroke.Thickness = 1
 stroke.Parent = mainFrame
+
+-- 标题区域（用作拖拽把手）
+local dragHandle = Instance.new("Frame")
+dragHandle.Size = UDim2.new(1, 0, 0, 45)      -- 覆盖标题和缩小按钮区域
+dragHandle.Position = UDim2.new(0, 0, 0, 0)
+dragHandle.BackgroundTransparency = 1         -- 完全透明，不可见但可交互
+dragHandle.Parent = mainFrame
+dragHandle.ZIndex = 2                         -- 确保在最上层接收输入
 
 -- 标题
 local title = Instance.new("TextLabel")
@@ -75,8 +83,8 @@ listContainer.BackgroundTransparency = 1
 listContainer.Visible = false
 listContainer.Parent = mainFrame
 listContainer.ClipsDescendants = true
-listContainer.ScrollBarThickness = 10
-listContainer.ScrollBarImageColor3 = Color3.fromRGB(120, 120, 120)
+listContainer.ScrollBarThickness = 15                     -- 更宽，方便手指
+listContainer.ScrollBarImageColor3 = Color3.fromRGB(100, 100, 100)
 listContainer.ScrollingDirection = Enum.ScrollingDirection.Y
 listContainer.BottomImage = "rbxasset://textures/ui/Scroll/scroll-bottom.png"
 listContainer.MidImage = "rbxasset://textures/ui/Scroll/scroll-mid.png"
@@ -90,7 +98,7 @@ local buttonData = {
     { text = "🌙 夜脚本", color = Color3.fromRGB(30, 50, 130), script = "https://raw.githubusercontent.com/ylt410/roblox-Script/refs/heads/main/yejiaoben" },
     { text = "🤖 Rob脚本", color = Color3.fromRGB(200, 80, 30), script = "https://raw.githubusercontent.com/idrobsc/rob_script/refs/heads/main/rob.v4" },
     { text = "❌ XK脚本", color = Color3.fromRGB(160, 50, 200), script = "https://raw.githubusercontent.com/SyndromeXph/XK-Script/refs/heads/main/XoneK-Loader.luau" },
-    { text = "🍂 落叶中心", color = Color3.fromRGB(34, 139, 34), script = "https://raw.githubusercontent.com/krlpl/Deciduous-center-LS/main/%E8%90%BD%E5%8F%B6%E4%B8%AD%E5%BF%83%E6%B7%B7%E6%B7%86.txt" }  -- 森林绿
+    { text = "🍂 落叶中心", color = Color3.fromRGB(34, 139, 34), script = "https://raw.githubusercontent.com/krlpl/Deciduous-center-LS/main/%E8%90%BD%E5%8F%B6%E4%B8%AD%E5%BF%83%E6%B7%B7%E6%B7%86.txt" }
 }
 
 local buttonHeight = 38
@@ -116,20 +124,15 @@ end
 
 listContainer.CanvasSize = UDim2.new(0, 0, 0, totalHeight)
 
--- ========== 执行函数（支持带前置变量的脚本） ==========
+-- ========== 执行函数（支持落叶中心前置变量） ==========
 local function executeScript(url, scriptName)
     task.spawn(function()
         local success, err = pcall(function()
-            -- 对于“落叶中心”特殊处理：先设置全局变量
             if scriptName == "落叶中心" then
                 getgenv().LS = "落叶中心"
             end
             local result = loadstring(game:HttpGet(url))
-            if result then
-                result()
-            else
-                warn("脚本加载失败: " .. url)
-            end
+            if result then result() else warn("脚本加载失败: " .. url) end
         end)
         if not success then
             warn("执行 [" .. scriptName .. "] 出错: " .. tostring(err))
@@ -239,12 +242,12 @@ miniIcon.InputEnded:Connect(function(input)
     end
 end)
 
--- ========== 主窗口拖拽 ==========
+-- ========== 窗口拖拽（仅标题区域） ==========
 local dragging = false
 local dragStartPos = nil
 local startFramePos = nil
 
-mainFrame.InputBegan:Connect(function(input)
+dragHandle.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
         dragging = true
         dragStartPos = input.Position
@@ -252,7 +255,7 @@ mainFrame.InputBegan:Connect(function(input)
     end
 end)
 
-mainFrame.InputChanged:Connect(function(input)
+dragHandle.InputChanged:Connect(function(input)
     if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
         local delta = input.Position - dragStartPos
         mainFrame.Position = UDim2.new(
@@ -264,7 +267,7 @@ mainFrame.InputChanged:Connect(function(input)
     end
 end)
 
-mainFrame.InputEnded:Connect(function(input)
+dragHandle.InputEnded:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
         dragging = false
     end
