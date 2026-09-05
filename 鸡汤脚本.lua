@@ -1,4 +1,4 @@
--- 鸡汤脚本 - 纯白背景 + 脚本中心折叠（上移），五开关，手机优化
+-- 鸡汤脚本 - 纯白背景 + 脚本中心折叠（滚动列表），五开关，手机优化
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local UserInputService = game:GetService("UserInputService")
@@ -11,7 +11,7 @@ screenGui.ResetOnSpawn = false
 
 -- ========== 主窗口（纯白） ==========
 local mainFrame = Instance.new("Frame")
-mainFrame.Size = UDim2.new(0, 320, 0, 120)          -- 初始高度
+mainFrame.Size = UDim2.new(0, 320, 0, 120)
 mainFrame.Position = UDim2.new(0.5, -160, 0.5, -60)
 mainFrame.BackgroundColor3 = Color3.new(1, 1, 1)
 mainFrame.BackgroundTransparency = 0
@@ -28,7 +28,7 @@ stroke.Color = Color3.fromRGB(200, 200, 200)
 stroke.Thickness = 1
 stroke.Parent = mainFrame
 
--- ========== 标题（黑色） ==========
+-- 标题
 local title = Instance.new("TextLabel")
 title.Size = UDim2.new(1, 0, 0, 35)
 title.Position = UDim2.new(0, 0, 0, 5)
@@ -39,7 +39,7 @@ title.TextScaled = true
 title.Font = Enum.Font.GothamBold
 title.Parent = mainFrame
 
--- ========== 缩小按钮 ==========
+-- 缩小按钮
 local minimizeBtn = Instance.new("TextButton")
 minimizeBtn.Size = UDim2.new(0, 30, 0, 30)
 minimizeBtn.Position = UDim2.new(1, -40, 0, 5)
@@ -53,10 +53,10 @@ minCorner.CornerRadius = UDim.new(0, 6)
 minCorner.Parent = minimizeBtn
 minimizeBtn.Parent = mainFrame
 
--- ========== “脚本中心”按钮（上移到标题下方，使用 Offset） ==========
+-- “脚本中心”按钮（上移）
 local centerBtn = Instance.new("TextButton")
 centerBtn.Size = UDim2.new(0.8, 0, 0, 40)
-centerBtn.Position = UDim2.new(0.1, 0, 0, 50)        -- Y 绝对偏移 50（标题下方5像素）
+centerBtn.Position = UDim2.new(0.1, 0, 0, 50)
 centerBtn.BackgroundColor3 = Color3.fromRGB(230, 230, 230)
 centerBtn.Text = "📂 脚本中心 ▼"
 centerBtn.TextColor3 = Color3.new(0, 0, 0)
@@ -67,29 +67,39 @@ centerCorner.CornerRadius = UDim.new(0, 8)
 centerCorner.Parent = centerBtn
 centerBtn.Parent = mainFrame
 
--- ========== 列表容器（位于“脚本中心”下方） ==========
-local listContainer = Instance.new("Frame")
-listContainer.Size = UDim2.new(1, 0, 1, -95)         -- 宽度100%，高度为父容器高度-95（留出标题和中心按钮）
-listContainer.Position = UDim2.new(0, 0, 0, 95)      -- 从 Y=95 开始
+-- ========== 列表容器（滚动框） ==========
+local listContainer = Instance.new("ScrollingFrame")
+listContainer.Size = UDim2.new(1, 0, 1, -95)          -- 宽度100%，高度为父容器高度-95
+listContainer.Position = UDim2.new(0, 0, 0, 95)       -- 从 Y=95 开始
 listContainer.BackgroundTransparency = 1
 listContainer.Visible = false
 listContainer.Parent = mainFrame
 listContainer.ClipsDescendants = true
+listContainer.ScrollBarThickness = 4                   -- 滚动条宽度
+listContainer.ScrollBarImageColor3 = Color3.fromRGB(150, 150, 150)
+listContainer.BottomImage = "rbxasset://textures/ui/Scroll/scroll-bottom.png"
+listContainer.MidImage = "rbxasset://textures/ui/Scroll/scroll-mid.png"
+listContainer.TopImage = "rbxasset://textures/ui/Scroll/scroll-top.png"
 
--- ========== 五个功能按钮（在列表容器内） ==========
+-- ========== 生成五个功能按钮 ==========
 local buttons = {}
 local buttonData = {
-    { text = "🥚 偷一个蛋", color = Color3.fromRGB(50, 180, 230), y = 0.05, script = "https://raw.githubusercontent.com/caomod2077/Script/refs/heads/main/Fn-stealanegg.lua" },
-    { text = "⚫ 黑白脚本", color = Color3.fromRGB(100, 100, 100), y = 0.23, script = "https://raw.githubusercontent.com/tfcygvunbind/Apple/main/黑白脚本加载器" },
-    { text = "🌙 夜脚本", color = Color3.fromRGB(30, 50, 130), y = 0.41, script = "https://raw.githubusercontent.com/ylt410/roblox-Script/refs/heads/main/yejiaoben" },
-    { text = "🤖 Rob脚本", color = Color3.fromRGB(200, 80, 30), y = 0.59, script = "https://raw.githubusercontent.com/idrobsc/rob_script/refs/heads/main/rob.v4" },
-    { text = "❌ XK脚本", color = Color3.fromRGB(160, 50, 200), y = 0.77, script = "https://raw.githubusercontent.com/SyndromeXph/XK-Script/refs/heads/main/XoneK-Loader.luau" }
+    { text = "🥚 偷一个蛋", color = Color3.fromRGB(50, 180, 230), script = "https://raw.githubusercontent.com/caomod2077/Script/refs/heads/main/Fn-stealanegg.lua" },
+    { text = "⚫ 黑白脚本", color = Color3.fromRGB(100, 100, 100), script = "https://raw.githubusercontent.com/tfcygvunbind/Apple/main/黑白脚本加载器" },
+    { text = "🌙 夜脚本", color = Color3.fromRGB(30, 50, 130), script = "https://raw.githubusercontent.com/ylt410/roblox-Script/refs/heads/main/yejiaoben" },
+    { text = "🤖 Rob脚本", color = Color3.fromRGB(200, 80, 30), script = "https://raw.githubusercontent.com/idrobsc/rob_script/refs/heads/main/rob.v4" },
+    { text = "❌ XK脚本", color = Color3.fromRGB(160, 50, 200), script = "https://raw.githubusercontent.com/SyndromeXph/XK-Script/refs/heads/main/XoneK-Loader.luau" }
 }
 
-for _, data in ipairs(buttonData) do
+local buttonHeight = 38
+local spacing = 8
+local paddingTop = 10
+local totalHeight = paddingTop + #buttonData * (buttonHeight + spacing) + 10   -- 总内容高度
+
+for i, data in ipairs(buttonData) do
     local btn = Instance.new("TextButton")
-    btn.Size = UDim2.new(0.8, 0, 0, 40)
-    btn.Position = UDim2.new(0.1, 0, data.y, 0)
+    btn.Size = UDim2.new(0.8, 0, 0, buttonHeight)
+    btn.Position = UDim2.new(0.1, 0, 0, paddingTop + (i-1) * (buttonHeight + spacing))
     btn.BackgroundColor3 = data.color
     btn.Text = data.text
     btn.TextColor3 = Color3.new(1, 1, 1)
@@ -102,7 +112,10 @@ for _, data in ipairs(buttonData) do
     buttons[#buttons + 1] = { btn = btn, script = data.script, name = data.text:gsub("[%p%w]","") }
 end
 
--- ========== 执行脚本函数 ==========
+-- 设置滚动画布大小
+listContainer.CanvasSize = UDim2.new(0, 0, 0, totalHeight)
+
+-- ========== 执行函数 ==========
 local function executeScript(url, scriptName)
     task.spawn(function()
         local success, err = pcall(function()
@@ -132,16 +145,16 @@ for _, item in ipairs(buttons) do
     end)
 end
 
--- ========== 脚本中心展开/收起 ==========
+-- ========== 脚本中心折叠 ==========
 local isExpanded = false
 local function toggleList()
     isExpanded = not isExpanded
     if isExpanded then
-        mainFrame.Size = UDim2.new(0, 320, 0, 400)    -- 展开高度
+        mainFrame.Size = UDim2.new(0, 320, 0, 400)
         listContainer.Visible = true
         centerBtn.Text = "📂 脚本中心 ▲"
     else
-        mainFrame.Size = UDim2.new(0, 320, 0, 120)    -- 收起高度
+        mainFrame.Size = UDim2.new(0, 320, 0, 120)
         listContainer.Visible = false
         centerBtn.Text = "📂 脚本中心 ▼"
     end
@@ -178,7 +191,7 @@ end
 
 minimizeBtn.MouseButton1Click:Connect(minimize)
 
--- 小鸡图标拖拽 + 点击展开（修复）
+-- 小鸡图标拖拽 + 点击展开
 local iconDragging = false
 local iconDragStart = nil
 local iconStartPos = nil
