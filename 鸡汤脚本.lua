@@ -28,6 +28,14 @@ stroke.Color = Color3.fromRGB(200, 200, 200)
 stroke.Thickness = 1
 stroke.Parent = mainFrame
 
+-- 拖拽区域（透明覆盖标题栏）
+local dragHandle = Instance.new("Frame")
+dragHandle.Size = UDim2.new(1, 0, 0, 45)
+dragHandle.Position = UDim2.new(0, 0, 0, 0)
+dragHandle.BackgroundTransparency = 1
+dragHandle.Parent = mainFrame
+dragHandle.ZIndex = 2
+
 -- ========== 标题（居中） ==========
 local title = Instance.new("TextLabel")
 title.Size = UDim2.new(0, 200, 0, 35)
@@ -39,7 +47,7 @@ title.TextScaled = true
 title.Font = Enum.Font.GothamBold
 title.Parent = mainFrame
 
--- ========== 左上角设置按钮（切换开关） ==========
+-- ========== 左上角设置按钮 ==========
 local settingBtn = Instance.new("TextButton")
 settingBtn.Size = UDim2.new(0, 30, 0, 30)
 settingBtn.Position = UDim2.new(0, 5, 0, 5)
@@ -52,6 +60,7 @@ local setCorner = Instance.new("UICorner")
 setCorner.CornerRadius = UDim.new(0, 6)
 setCorner.Parent = settingBtn
 settingBtn.Parent = mainFrame
+settingBtn.ZIndex = 3  -- 确保在 dragHandle 上方
 
 -- ========== 右上角缩小按钮 ==========
 local minimizeBtn = Instance.new("TextButton")
@@ -66,6 +75,7 @@ local minCorner = Instance.new("UICorner")
 minCorner.CornerRadius = UDim.new(0, 6)
 minCorner.Parent = minimizeBtn
 minimizeBtn.Parent = mainFrame
+minimizeBtn.ZIndex = 3
 
 -- “脚本中心”按钮
 local centerBtn = Instance.new("TextButton")
@@ -221,16 +231,16 @@ closeCorner.CornerRadius = UDim.new(0, 6)
 closeCorner.Parent = closeSetBtn
 closeSetBtn.Parent = settingFrame
 
--- 颜色选择网格（两行，每行4个）
+-- 颜色选择网格
 local colors = {
-    Color3.new(1, 1, 1),          -- 白
-    Color3.fromRGB(255, 100, 100),-- 红
-    Color3.fromRGB(100, 200, 255),-- 浅蓝
-    Color3.fromRGB(255, 200, 100),-- 橙
-    Color3.fromRGB(200, 255, 100),-- 黄绿
-    Color3.fromRGB(200, 150, 255),-- 紫
-    Color3.fromRGB(100, 255, 200),-- 青
-    Color3.fromRGB(255, 150, 200) -- 粉
+    Color3.new(1, 1, 1),
+    Color3.fromRGB(255, 100, 100),
+    Color3.fromRGB(100, 200, 255),
+    Color3.fromRGB(255, 200, 100),
+    Color3.fromRGB(200, 255, 100),
+    Color3.fromRGB(200, 150, 255),
+    Color3.fromRGB(100, 255, 200),
+    Color3.fromRGB(255, 150, 200)
 }
 local gridSize = 40
 local spacingX = 20
@@ -256,29 +266,27 @@ for i, color in ipairs(colors) do
     btn.MouseButton1Click:Connect(function()
         mainFrame.BackgroundColor3 = color
         settingFrame.Visible = false
-        settingBtn.BackgroundColor3 = Color3.fromRGB(220, 220, 220) -- 关闭时恢复原色
+        settingBtn.BackgroundColor3 = Color3.fromRGB(220, 220, 220)
     end)
 end
 
--- ========== 设置窗口切换（点击设置按钮） ==========
+-- ========== 设置按钮切换 ==========
 local function toggleSettings()
     settingFrame.Visible = not settingFrame.Visible
     if settingFrame.Visible then
-        settingBtn.BackgroundColor3 = Color3.fromRGB(100, 220, 100) -- 打开时高亮为绿色
+        settingBtn.BackgroundColor3 = Color3.fromRGB(100, 220, 100)
     else
-        settingBtn.BackgroundColor3 = Color3.fromRGB(220, 220, 220) -- 关闭时恢复
+        settingBtn.BackgroundColor3 = Color3.fromRGB(220, 220, 220)
     end
 end
 
 settingBtn.MouseButton1Click:Connect(toggleSettings)
 
--- 关闭按钮关闭
 closeSetBtn.MouseButton1Click:Connect(function()
     settingFrame.Visible = false
     settingBtn.BackgroundColor3 = Color3.fromRGB(220, 220, 220)
 end)
 
--- 点击设置窗口外部关闭
 screenGui.InputBegan:Connect(function(input)
     if settingFrame.Visible and (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then
         local pos = input.Position
@@ -291,24 +299,20 @@ screenGui.InputBegan:Connect(function(input)
     end
 end)
 
--- ========== 窗口拖拽（仅限标题栏区域，Y < 45） ==========
+-- ========== 窗口拖拽（dragHandle） ==========
 local dragging = false
 local dragStartPos = nil
 local startFramePos = nil
 
-mainFrame.InputBegan:Connect(function(input)
+dragHandle.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-        local absPos = mainFrame.AbsolutePosition
-        local localY = input.Position.Y - absPos.Y
-        if localY < 45 then
-            dragging = true
-            dragStartPos = input.Position
-            startFramePos = mainFrame.Position
-        end
+        dragging = true
+        dragStartPos = input.Position
+        startFramePos = mainFrame.Position
     end
 end)
 
-mainFrame.InputChanged:Connect(function(input)
+dragHandle.InputChanged:Connect(function(input)
     if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
         local delta = input.Position - dragStartPos
         mainFrame.Position = UDim2.new(
@@ -320,7 +324,7 @@ mainFrame.InputChanged:Connect(function(input)
     end
 end)
 
-mainFrame.InputEnded:Connect(function(input)
+dragHandle.InputEnded:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
         dragging = false
     end
