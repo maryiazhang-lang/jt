@@ -1,21 +1,18 @@
--- 鸡汤脚本 - 纯白背景 + 脚本中心折叠 + 颜色设置（左上角切换），六开关，手机优化
--- 修复：缩小按钮、窗口拖动完全正常
+-- 鸡汤脚本 - 稳定版：所有按钮、拖动、缩小功能正常
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local UserInputService = game:GetService("UserInputService")
 
--- 创建主 ScreenGui
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "鸡汤脚本"
 screenGui.Parent = player:WaitForChild("PlayerGui")
 screenGui.ResetOnSpawn = false
 
--- ========== 主窗口（纯白） ==========
+-- 主窗口
 local mainFrame = Instance.new("Frame")
 mainFrame.Size = UDim2.new(0, 320, 0, 120)
 mainFrame.Position = UDim2.new(0.5, -160, 0.5, -60)
 mainFrame.BackgroundColor3 = Color3.new(1, 1, 1)
-mainFrame.BackgroundTransparency = 0
 mainFrame.Parent = screenGui
 mainFrame.ClipsDescendants = true
 mainFrame.ZIndex = 1
@@ -29,17 +26,17 @@ stroke.Color = Color3.fromRGB(200, 200, 200)
 stroke.Thickness = 1
 stroke.Parent = mainFrame
 
--- 拖拽区域（透明按钮，覆盖标题栏）
+-- 拖拽把手（透明按钮，覆盖标题区域）
 local dragHandle = Instance.new("TextButton")
 dragHandle.Size = UDim2.new(1, 0, 0, 45)
 dragHandle.Position = UDim2.new(0, 0, 0, 0)
-dragHandle.BackgroundTransparency = 1          -- 完全透明
-dragHandle.Text = ""                           -- 无文字
+dragHandle.BackgroundTransparency = 1
+dragHandle.Text = ""
+dragHandle.AutoButtonColor = false
 dragHandle.Parent = mainFrame
-dragHandle.ZIndex = 1                          -- 在按钮下方
-dragHandle.AutoButtonColor = false             -- 禁止点击变色
+dragHandle.ZIndex = 1  -- 最低层，让其他按钮在上方
 
--- ========== 标题（居中） ==========
+-- 标题
 local title = Instance.new("TextLabel")
 title.Size = UDim2.new(0, 200, 0, 35)
 title.Position = UDim2.new(0.5, -100, 0, 5)
@@ -51,7 +48,7 @@ title.Font = Enum.Font.GothamBold
 title.Parent = mainFrame
 title.ZIndex = 2
 
--- ========== 左上角设置按钮 ==========
+-- 设置按钮（左上）
 local settingBtn = Instance.new("TextButton")
 settingBtn.Size = UDim2.new(0, 30, 0, 30)
 settingBtn.Position = UDim2.new(0, 5, 0, 5)
@@ -66,7 +63,7 @@ setCorner.Parent = settingBtn
 settingBtn.Parent = mainFrame
 settingBtn.ZIndex = 3
 
--- ========== 右上角缩小按钮 ==========
+-- 缩小按钮（右上）
 local minimizeBtn = Instance.new("TextButton")
 minimizeBtn.Size = UDim2.new(0, 30, 0, 30)
 minimizeBtn.Position = UDim2.new(1, -40, 0, 5)
@@ -81,7 +78,7 @@ minCorner.Parent = minimizeBtn
 minimizeBtn.Parent = mainFrame
 minimizeBtn.ZIndex = 3
 
--- “脚本中心”按钮
+-- 脚本中心按钮
 local centerBtn = Instance.new("TextButton")
 centerBtn.Size = UDim2.new(0.8, 0, 0, 40)
 centerBtn.Position = UDim2.new(0.1, 0, 0, 50)
@@ -94,8 +91,9 @@ local centerCorner = Instance.new("UICorner")
 centerCorner.CornerRadius = UDim.new(0, 8)
 centerCorner.Parent = centerBtn
 centerBtn.Parent = mainFrame
+centerBtn.ZIndex = 2
 
--- ========== 列表容器（滚动框，无滚动条） ==========
+-- 列表容器（滚动）
 local listContainer = Instance.new("ScrollingFrame")
 listContainer.Size = UDim2.new(1, 0, 1, -95)
 listContainer.Position = UDim2.new(0, 0, 0, 95)
@@ -110,7 +108,7 @@ listContainer.BottomImage = ""
 listContainer.MidImage = ""
 listContainer.TopImage = ""
 
--- ========== 生成六个功能按钮 ==========
+-- 六个功能按钮
 local buttons = {}
 local buttonData = {
     { text = "🥚 偷一个蛋", color = Color3.fromRGB(50, 180, 230), script = "https://raw.githubusercontent.com/caomod2077/Script/refs/heads/main/Fn-stealanegg.lua" },
@@ -141,10 +139,9 @@ for i, data in ipairs(buttonData) do
     btn.Parent = listContainer
     buttons[#buttons + 1] = { btn = btn, script = data.script, name = data.text:gsub("[%p%w]","") }
 end
-
 listContainer.CanvasSize = UDim2.new(0, 0, 0, totalHeight)
 
--- ========== 执行脚本函数 ==========
+-- 执行脚本函数
 local function executeScript(url, scriptName)
     task.spawn(function()
         local success, err = pcall(function()
@@ -152,12 +149,11 @@ local function executeScript(url, scriptName)
                 getgenv().LS = "落叶中心"
             end
             local result = loadstring(game:HttpGet(url))
-            if result then result() else warn("脚本加载失败: " .. url) end
+            if result then result() else warn("加载失败: " .. url) end
         end)
         if not success then
-            warn("执行 [" .. scriptName .. "] 出错: " .. tostring(err))
             local hint = Instance.new("Hint")
-            hint.Text = "❌ 脚本失败: " .. scriptName
+            hint.Text = "❌ 失败: " .. scriptName
             hint.Parent = game:GetService("Workspace")
             task.wait(3)
             hint:Destroy()
@@ -177,7 +173,7 @@ for _, item in ipairs(buttons) do
     end)
 end
 
--- ========== 脚本中心折叠 ==========
+-- 折叠功能
 local isExpanded = false
 local function toggleList()
     isExpanded = not isExpanded
@@ -193,12 +189,11 @@ local function toggleList()
 end
 centerBtn.MouseButton1Click:Connect(toggleList)
 
--- ========== 设置窗口 ==========
+-- 设置窗口
 local settingFrame = Instance.new("Frame")
 settingFrame.Size = UDim2.new(0, 260, 0, 200)
 settingFrame.Position = UDim2.new(0.5, -130, 0.5, -100)
 settingFrame.BackgroundColor3 = Color3.new(1, 1, 1)
-settingFrame.BackgroundTransparency = 0
 settingFrame.Visible = false
 settingFrame.Parent = screenGui
 settingFrame.ZIndex = 20
@@ -210,7 +205,6 @@ setStroke.Color = Color3.fromRGB(180, 180, 180)
 setStroke.Thickness = 1
 setStroke.Parent = settingFrame
 
--- 设置窗口标题
 local setTitle = Instance.new("TextLabel")
 setTitle.Size = UDim2.new(1, 0, 0, 35)
 setTitle.Position = UDim2.new(0, 0, 0, 5)
@@ -221,7 +215,6 @@ setTitle.TextScaled = true
 setTitle.Font = Enum.Font.GothamBold
 setTitle.Parent = settingFrame
 
--- 关闭按钮
 local closeSetBtn = Instance.new("TextButton")
 closeSetBtn.Size = UDim2.new(0, 30, 0, 30)
 closeSetBtn.Position = UDim2.new(1, -35, 0, 5)
@@ -235,7 +228,6 @@ closeCorner.CornerRadius = UDim.new(0, 6)
 closeCorner.Parent = closeSetBtn
 closeSetBtn.Parent = settingFrame
 
--- 颜色选择网格
 local colors = {
     Color3.new(1, 1, 1),
     Color3.fromRGB(255, 100, 100),
@@ -259,7 +251,6 @@ for i, color in ipairs(colors) do
     btn.Size = UDim2.new(0, gridSize, 0, gridSize)
     btn.Position = UDim2.new(0, startX + col * (gridSize + spacingX), 0, startY + row * (gridSize + spacingY))
     btn.BackgroundColor3 = color
-    btn.BackgroundTransparency = 0
     btn.BorderSizePixel = 1
     btn.BorderColor3 = Color3.fromRGB(150, 150, 150)
     btn.Text = ""
@@ -274,16 +265,10 @@ for i, color in ipairs(colors) do
     end)
 end
 
--- ========== 设置按钮切换 ==========
 local function toggleSettings()
     settingFrame.Visible = not settingFrame.Visible
-    if settingFrame.Visible then
-        settingBtn.BackgroundColor3 = Color3.fromRGB(100, 220, 100)
-    else
-        settingBtn.BackgroundColor3 = Color3.fromRGB(220, 220, 220)
-    end
+    settingBtn.BackgroundColor3 = settingFrame.Visible and Color3.fromRGB(100, 220, 100) or Color3.fromRGB(220, 220, 220)
 end
-
 settingBtn.MouseButton1Click:Connect(toggleSettings)
 
 closeSetBtn.MouseButton1Click:Connect(function()
@@ -303,10 +288,9 @@ screenGui.InputBegan:Connect(function(input)
     end
 end)
 
--- ========== 窗口拖拽（dragHandle 事件） ==========
+-- ===== 窗口拖拽（dragHandle） =====
 local dragging = false
-local dragStartPos = nil
-local startFramePos = nil
+local dragStartPos, startFramePos
 
 dragHandle.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
@@ -334,7 +318,7 @@ dragHandle.InputEnded:Connect(function(input)
     end
 end)
 
--- ========== 缩小 / 展开（小鸡图标） ==========
+-- 小鸡图标（缩小后的图标）
 local miniIcon = Instance.new("TextButton")
 miniIcon.Size = UDim2.new(0, 55, 0, 55)
 miniIcon.Position = UDim2.new(0.02, 0, 1, -70)
@@ -364,11 +348,12 @@ end
 
 minimizeBtn.MouseButton1Click:Connect(minimize)
 
--- 小鸡图标拖拽 + 点击展开
+-- 小鸡图标点击展开
+miniIcon.MouseButton1Click:Connect(expand)
+
+-- 小鸡图标拖拽
 local iconDragging = false
-local iconDragStart = nil
-local iconStartPos = nil
-local isDragged = false
+local iconDragStart, iconStartPos, isDragged = false, nil, nil, false
 
 miniIcon.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
@@ -382,9 +367,7 @@ end)
 miniIcon.InputChanged:Connect(function(input)
     if iconDragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
         local delta = input.Position - iconDragStart
-        if delta.Magnitude > 3 then
-            isDragged = true
-        end
+        if delta.Magnitude > 3 then isDragged = true end
         miniIcon.Position = UDim2.new(
             iconStartPos.X.Scale,
             iconStartPos.X.Offset + delta.X,
@@ -397,8 +380,6 @@ end)
 miniIcon.InputEnded:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
         iconDragging = false
-        if not isDragged then
-            expand()
-        end
+        if not isDragged then expand() end
     end
 end)
