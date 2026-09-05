@@ -1,4 +1,4 @@
--- 鸡汤脚本 - 纯白背景 + 脚本中心折叠（滚动列表），五开关，手机优化
+-- 鸡汤脚本 - 纯白背景 + 脚本中心折叠（滚动列表，加粗侧边滚动条），五开关，手机优化
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local UserInputService = game:GetService("UserInputService")
@@ -67,7 +67,7 @@ centerCorner.CornerRadius = UDim.new(0, 8)
 centerCorner.Parent = centerBtn
 centerBtn.Parent = mainFrame
 
--- ========== 列表容器（滚动框） ==========
+-- ========== 列表容器（滚动框，加粗侧边滚动条） ==========
 local listContainer = Instance.new("ScrollingFrame")
 listContainer.Size = UDim2.new(1, 0, 1, -95)          -- 宽度100%，高度为父容器高度-95
 listContainer.Position = UDim2.new(0, 0, 0, 95)       -- 从 Y=95 开始
@@ -75,8 +75,9 @@ listContainer.BackgroundTransparency = 1
 listContainer.Visible = false
 listContainer.Parent = mainFrame
 listContainer.ClipsDescendants = true
-listContainer.ScrollBarThickness = 4                   -- 滚动条宽度
-listContainer.ScrollBarImageColor3 = Color3.fromRGB(150, 150, 150)
+listContainer.ScrollBarThickness = 10                  -- 加粗滚动条（方便手指操作）
+listContainer.ScrollBarImageColor3 = Color3.fromRGB(120, 120, 120) -- 更明显的灰色
+listContainer.ScrollingDirection = Enum.ScrollingDirection.Y   -- 垂直滚动
 listContainer.BottomImage = "rbxasset://textures/ui/Scroll/scroll-bottom.png"
 listContainer.MidImage = "rbxasset://textures/ui/Scroll/scroll-mid.png"
 listContainer.TopImage = "rbxasset://textures/ui/Scroll/scroll-top.png"
@@ -94,7 +95,7 @@ local buttonData = {
 local buttonHeight = 38
 local spacing = 8
 local paddingTop = 10
-local totalHeight = paddingTop + #buttonData * (buttonHeight + spacing) + 10   -- 总内容高度
+local totalHeight = paddingTop + #buttonData * (buttonHeight + spacing) + 10
 
 for i, data in ipairs(buttonData) do
     local btn = Instance.new("TextButton")
@@ -112,7 +113,6 @@ for i, data in ipairs(buttonData) do
     buttons[#buttons + 1] = { btn = btn, script = data.script, name = data.text:gsub("[%p%w]","") }
 end
 
--- 设置滚动画布大小
 listContainer.CanvasSize = UDim2.new(0, 0, 0, totalHeight)
 
 -- ========== 执行函数 ==========
