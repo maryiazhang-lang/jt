@@ -1,4 +1,4 @@
--- 鸡汤脚本 - 纯白背景 + 脚本中心折叠（滚动列表），六开关，手机优化（拖动限定标题栏）
+-- 鸡汤脚本 - 纯白背景 + 脚本中心折叠（无滚动条，纯触摸滑动），六开关，手机优化
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local UserInputService = game:GetService("UserInputService")
@@ -30,11 +30,11 @@ stroke.Parent = mainFrame
 
 -- 标题区域（用作拖拽把手）
 local dragHandle = Instance.new("Frame")
-dragHandle.Size = UDim2.new(1, 0, 0, 45)      -- 覆盖标题和缩小按钮区域
+dragHandle.Size = UDim2.new(1, 0, 0, 45)
 dragHandle.Position = UDim2.new(0, 0, 0, 0)
-dragHandle.BackgroundTransparency = 1         -- 完全透明，不可见但可交互
+dragHandle.BackgroundTransparency = 1
 dragHandle.Parent = mainFrame
-dragHandle.ZIndex = 2                         -- 确保在最上层接收输入
+dragHandle.ZIndex = 2
 
 -- 标题
 local title = Instance.new("TextLabel")
@@ -61,7 +61,7 @@ minCorner.CornerRadius = UDim.new(0, 6)
 minCorner.Parent = minimizeBtn
 minimizeBtn.Parent = mainFrame
 
--- “脚本中心”按钮（上移）
+-- “脚本中心”按钮
 local centerBtn = Instance.new("TextButton")
 centerBtn.Size = UDim2.new(0.8, 0, 0, 40)
 centerBtn.Position = UDim2.new(0.1, 0, 0, 50)
@@ -75,7 +75,7 @@ centerCorner.CornerRadius = UDim.new(0, 8)
 centerCorner.Parent = centerBtn
 centerBtn.Parent = mainFrame
 
--- ========== 列表容器（滚动框，加粗侧边滚动条） ==========
+-- ========== 列表容器（滚动框，无滚动条，纯触摸滑动） ==========
 local listContainer = Instance.new("ScrollingFrame")
 listContainer.Size = UDim2.new(1, 0, 1, -95)
 listContainer.Position = UDim2.new(0, 0, 0, 95)
@@ -83,12 +83,12 @@ listContainer.BackgroundTransparency = 1
 listContainer.Visible = false
 listContainer.Parent = mainFrame
 listContainer.ClipsDescendants = true
-listContainer.ScrollBarThickness = 15                     -- 更宽，方便手指
-listContainer.ScrollBarImageColor3 = Color3.fromRGB(100, 100, 100)
+listContainer.ScrollBarThickness = 0                     -- 完全移除滚动条
 listContainer.ScrollingDirection = Enum.ScrollingDirection.Y
-listContainer.BottomImage = "rbxasset://textures/ui/Scroll/scroll-bottom.png"
-listContainer.MidImage = "rbxasset://textures/ui/Scroll/scroll-mid.png"
-listContainer.TopImage = "rbxasset://textures/ui/Scroll/scroll-top.png"
+listContainer.ElasticBehavior = Enum.ElasticBehavior.Never  -- 禁用回弹效果，更自然
+listContainer.BottomImage = ""                           -- 清除默认滚动条图片
+listContainer.MidImage = ""
+listContainer.TopImage = ""
 
 -- ========== 生成六个功能按钮 ==========
 local buttons = {}
@@ -124,7 +124,7 @@ end
 
 listContainer.CanvasSize = UDim2.new(0, 0, 0, totalHeight)
 
--- ========== 执行函数（支持落叶中心前置变量） ==========
+-- ========== 执行函数 ==========
 local function executeScript(url, scriptName)
     task.spawn(function()
         local success, err = pcall(function()
