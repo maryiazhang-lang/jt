@@ -1,4 +1,4 @@
--- 鸡汤脚本 - 纯白背景 + 脚本中心折叠 + 颜色设置，六开关，手机优化
+-- 鸡汤脚本 - 纯白背景 + 脚本中心折叠 + 颜色设置（左上角），六开关，手机优化
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local UserInputService = game:GetService("UserInputService")
@@ -36,10 +36,10 @@ dragHandle.BackgroundTransparency = 1
 dragHandle.Parent = mainFrame
 dragHandle.ZIndex = 2
 
--- 标题
+-- ========== 标题（居中） ==========
 local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1, -70, 0, 35)  -- 留出右侧按钮空间
-title.Position = UDim2.new(0, 5, 0, 5)
+title.Size = UDim2.new(0, 200, 0, 35)      -- 固定宽度，居中对齐
+title.Position = UDim2.new(0.5, -100, 0, 5) -- 居中偏移
 title.BackgroundTransparency = 1
 title.Text = "🍲 鸡汤脚本"
 title.TextColor3 = Color3.new(0, 0, 0)
@@ -47,25 +47,10 @@ title.TextScaled = true
 title.Font = Enum.Font.GothamBold
 title.Parent = mainFrame
 
--- ========== 右上角按钮组 ==========
--- 缩小按钮
-local minimizeBtn = Instance.new("TextButton")
-minimizeBtn.Size = UDim2.new(0, 30, 0, 30)
-minimizeBtn.Position = UDim2.new(1, -40, 0, 5)
-minimizeBtn.BackgroundColor3 = Color3.fromRGB(220, 220, 220)
-minimizeBtn.Text = "—"
-minimizeBtn.TextColor3 = Color3.new(0, 0, 0)
-minimizeBtn.TextScaled = true
-minimizeBtn.Font = Enum.Font.GothamBold
-local minCorner = Instance.new("UICorner")
-minCorner.CornerRadius = UDim.new(0, 6)
-minCorner.Parent = minimizeBtn
-minimizeBtn.Parent = mainFrame
-
--- 设置按钮
+-- ========== 左上角设置按钮 ==========
 local settingBtn = Instance.new("TextButton")
 settingBtn.Size = UDim2.new(0, 30, 0, 30)
-settingBtn.Position = UDim2.new(1, -75, 0, 5)   -- 在缩小按钮左侧
+settingBtn.Position = UDim2.new(0, 5, 0, 5)      -- 左上角
 settingBtn.BackgroundColor3 = Color3.fromRGB(220, 220, 220)
 settingBtn.Text = "⚙️"
 settingBtn.TextColor3 = Color3.new(0, 0, 0)
@@ -75,6 +60,20 @@ local setCorner = Instance.new("UICorner")
 setCorner.CornerRadius = UDim.new(0, 6)
 setCorner.Parent = settingBtn
 settingBtn.Parent = mainFrame
+
+-- ========== 右上角缩小按钮 ==========
+local minimizeBtn = Instance.new("TextButton")
+minimizeBtn.Size = UDim2.new(0, 30, 0, 30)
+minimizeBtn.Position = UDim2.new(1, -40, 0, 5)   -- 右上角
+minimizeBtn.BackgroundColor3 = Color3.fromRGB(220, 220, 220)
+minimizeBtn.Text = "—"
+minimizeBtn.TextColor3 = Color3.new(0, 0, 0)
+minimizeBtn.TextScaled = true
+minimizeBtn.Font = Enum.Font.GothamBold
+local minCorner = Instance.new("UICorner")
+minCorner.CornerRadius = UDim.new(0, 6)
+minCorner.Parent = minimizeBtn
+minimizeBtn.Parent = mainFrame
 
 -- “脚本中心”按钮
 local centerBtn = Instance.new("TextButton")
@@ -280,11 +279,9 @@ end
 settingBtn.MouseButton1Click:Connect(openSettings)
 closeSetBtn.MouseButton1Click:Connect(closeSettings)
 
--- 点击设置窗口外部关闭（点击主窗口或空白区域）
--- 但为了防止误触，仅当设置可见时，点击主窗口关闭设置
+-- 点击设置窗口外部关闭
 screenGui.InputBegan:Connect(function(input)
-    if settingFrame.Visible and input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-        -- 检查点击是否在设置窗口内
+    if settingFrame.Visible and (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then
         local pos = input.Position
         local absPos = settingFrame.AbsolutePosition
         local size = settingFrame.AbsoluteSize
