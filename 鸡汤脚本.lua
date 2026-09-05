@@ -1,4 +1,5 @@
 -- 鸡汤脚本 - 纯白背景 + 脚本中心折叠 + 颜色设置（左上角切换），六开关，手机优化
+-- 修复：缩小按钮、窗口拖动完全正常
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local UserInputService = game:GetService("UserInputService")
@@ -28,13 +29,15 @@ stroke.Color = Color3.fromRGB(200, 200, 200)
 stroke.Thickness = 1
 stroke.Parent = mainFrame
 
--- 拖拽区域（透明覆盖标题栏）
-local dragHandle = Instance.new("Frame")
+-- 拖拽区域（透明按钮，覆盖标题栏）
+local dragHandle = Instance.new("TextButton")
 dragHandle.Size = UDim2.new(1, 0, 0, 45)
 dragHandle.Position = UDim2.new(0, 0, 0, 0)
-dragHandle.BackgroundTransparency = 1
+dragHandle.BackgroundTransparency = 1          -- 完全透明
+dragHandle.Text = ""                           -- 无文字
 dragHandle.Parent = mainFrame
-dragHandle.ZIndex = 2
+dragHandle.ZIndex = 1                          -- 在按钮下方
+dragHandle.AutoButtonColor = false             -- 禁止点击变色
 
 -- ========== 标题（居中） ==========
 local title = Instance.new("TextLabel")
@@ -46,6 +49,7 @@ title.TextColor3 = Color3.new(0, 0, 0)
 title.TextScaled = true
 title.Font = Enum.Font.GothamBold
 title.Parent = mainFrame
+title.ZIndex = 2
 
 -- ========== 左上角设置按钮 ==========
 local settingBtn = Instance.new("TextButton")
@@ -60,7 +64,7 @@ local setCorner = Instance.new("UICorner")
 setCorner.CornerRadius = UDim.new(0, 6)
 setCorner.Parent = settingBtn
 settingBtn.Parent = mainFrame
-settingBtn.ZIndex = 3  -- 确保在 dragHandle 上方
+settingBtn.ZIndex = 3
 
 -- ========== 右上角缩小按钮 ==========
 local minimizeBtn = Instance.new("TextButton")
@@ -299,7 +303,7 @@ screenGui.InputBegan:Connect(function(input)
     end
 end)
 
--- ========== 窗口拖拽（dragHandle） ==========
+-- ========== 窗口拖拽（dragHandle 事件） ==========
 local dragging = false
 local dragStartPos = nil
 local startFramePos = nil
