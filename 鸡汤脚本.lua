@@ -1,4 +1,4 @@
--- 鸡汤脚本 - 纯白背景 + 脚本中心折叠 + 颜色设置（左上角），六开关，手机优化
+-- 鸡汤脚本 - 纯白背景 + 脚本中心折叠 + 颜色设置（左上角切换），六开关，手机优化
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local UserInputService = game:GetService("UserInputService")
@@ -39,7 +39,7 @@ title.TextScaled = true
 title.Font = Enum.Font.GothamBold
 title.Parent = mainFrame
 
--- ========== 左上角设置按钮 ==========
+-- ========== 左上角设置按钮（切换开关） ==========
 local settingBtn = Instance.new("TextButton")
 settingBtn.Size = UDim2.new(0, 30, 0, 30)
 settingBtn.Position = UDim2.new(0, 5, 0, 5)
@@ -256,20 +256,27 @@ for i, color in ipairs(colors) do
     btn.MouseButton1Click:Connect(function()
         mainFrame.BackgroundColor3 = color
         settingFrame.Visible = false
+        settingBtn.BackgroundColor3 = Color3.fromRGB(220, 220, 220) -- 关闭时恢复原色
     end)
 end
 
--- 设置窗口开关
-local function openSettings()
-    settingFrame.Visible = true
+-- ========== 设置窗口切换（点击设置按钮） ==========
+local function toggleSettings()
+    settingFrame.Visible = not settingFrame.Visible
+    if settingFrame.Visible then
+        settingBtn.BackgroundColor3 = Color3.fromRGB(100, 220, 100) -- 打开时高亮为绿色
+    else
+        settingBtn.BackgroundColor3 = Color3.fromRGB(220, 220, 220) -- 关闭时恢复
+    end
 end
 
-local function closeSettings()
+settingBtn.MouseButton1Click:Connect(toggleSettings)
+
+-- 关闭按钮关闭
+closeSetBtn.MouseButton1Click:Connect(function()
     settingFrame.Visible = false
-end
-
-settingBtn.MouseButton1Click:Connect(openSettings)
-closeSetBtn.MouseButton1Click:Connect(closeSettings)
+    settingBtn.BackgroundColor3 = Color3.fromRGB(220, 220, 220)
+end)
 
 -- 点击设置窗口外部关闭
 screenGui.InputBegan:Connect(function(input)
@@ -278,7 +285,8 @@ screenGui.InputBegan:Connect(function(input)
         local absPos = settingFrame.AbsolutePosition
         local size = settingFrame.AbsoluteSize
         if not (pos.X >= absPos.X and pos.X <= absPos.X + size.X and pos.Y >= absPos.Y and pos.Y <= absPos.Y + size.Y) then
-            closeSettings()
+            settingFrame.Visible = false
+            settingBtn.BackgroundColor3 = Color3.fromRGB(220, 220, 220)
         end
     end
 end)
@@ -290,10 +298,9 @@ local startFramePos = nil
 
 mainFrame.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-        -- 获取点击位置相对于 mainFrame 的 Y 坐标
         local absPos = mainFrame.AbsolutePosition
         local localY = input.Position.Y - absPos.Y
-        if localY < 45 then  -- 标题栏高度
+        if localY < 45 then
             dragging = true
             dragStartPos = input.Position
             startFramePos = mainFrame.Position
