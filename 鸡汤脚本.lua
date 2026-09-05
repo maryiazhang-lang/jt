@@ -12,7 +12,7 @@ local playerGui = player:WaitForChild("PlayerGui")
 -- 防止重复执行
 --------------------------------------------------
 
-local oldGui = playerGui:FindFirstChild("鸡汤脚本")
+local oldGui = playerGui:FindFirstChild("脚本中心")
 if oldGui then
     oldGui:Destroy()
 end
@@ -22,7 +22,7 @@ end
 --------------------------------------------------
 
 local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "鸡汤脚本"
+screenGui.Name = "脚本中心"
 screenGui.ResetOnSpawn = false
 screenGui.Parent = playerGui
 
@@ -142,7 +142,7 @@ title.Position = UDim2.new(
 
 title.BackgroundTransparency = 1
 
-title.Text = "🍲 鸡汤脚本"
+title.Text = "脚本中心"
 
 title.TextColor3 = Color3.fromRGB(
     0,
@@ -506,7 +506,7 @@ local function executeScript(
         else
 
             warn(
-                "[鸡汤脚本] " ..
+                "[脚本中心] " ..
                 tostring(err)
             )
 
@@ -1030,72 +1030,54 @@ mainFrame.InputBegan:Connect(
 )
 
 --------------------------------------------------
--- 小鸡图标
+--------------------------------------------------
+-- 猫猫图标
 --------------------------------------------------
 
-local miniIcon =
-    Instance.new("TextButton")
+local miniIcon = Instance.new("ImageButton")
 
-miniIcon.Name =
-    "MiniIcon"
+miniIcon.Name = "MiniIcon"
 
-miniIcon.Size =
-    UDim2.new(
-        0,
-        55,
-        0,
-        55
-    )
+miniIcon.Size = UDim2.new(
+    0,
+    60,
+    0,
+    60
+)
 
-miniIcon.Position =
-    UDim2.new(
-        0.02,
-        0,
-        1,
-        -70
-    )
+miniIcon.Position = UDim2.new(
+    0.02,
+    0,
+    1,
+    -75
+)
 
 miniIcon.BackgroundColor3 =
-    Color3.fromRGB(
-        255,
-        180,
-        50
-    )
+    Color3.fromRGB(255, 255, 255)
 
-miniIcon.Text = "🐔"
+miniIcon.BackgroundTransparency = 0
 
-miniIcon.TextScaled = true
+miniIcon.Image =
+    "https://img.wjwj.top/2026/09/06/b55182652732e280372cca9b2b9a23e5.jpg"
+
+miniIcon.ScaleType = Enum.ScaleType.Crop
 
 miniIcon.Visible = false
 
 miniIcon.ZIndex = 50
 
-miniIcon.Parent =
-    screenGui
+miniIcon.Parent = screenGui
 
-local iconCorner =
-    Instance.new("UICorner")
+-- 圆形
+local iconCorner = Instance.new("UICorner")
+iconCorner.CornerRadius = UDim.new(1, 0)
+iconCorner.Parent = miniIcon
 
-iconCorner.CornerRadius =
-    UDim.new(1, 0)
-
-iconCorner.Parent =
-    miniIcon
-
-local iconStroke =
-    Instance.new("UIStroke")
-
-iconStroke.Color =
-    Color3.fromRGB(
-        255,
-        255,
-        255
-    )
-
+-- 白色边框
+local iconStroke = Instance.new("UIStroke")
+iconStroke.Color = Color3.fromRGB(255, 255, 255)
 iconStroke.Thickness = 2
-
-iconStroke.Parent =
-    miniIcon
+iconStroke.Parent = miniIcon
 
 --------------------------------------------------
 -- 缩小
@@ -1136,7 +1118,7 @@ minimizeBtn.MouseButton1Click:Connect(
 )
 
 --------------------------------------------------
--- 小鸡图标拖动
+-- 图标拖动
 --------------------------------------------------
 
 local iconDragging = false
@@ -1236,5 +1218,5 @@ UserInputService.InputEnded:Connect(
 )
 
 print(
-    "🍲 鸡汤脚本 - 一体式滚动版加载完成"
+    "脚本中心 - 一体式滚动版加载完成"
 )
