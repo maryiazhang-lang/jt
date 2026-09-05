@@ -1,4 +1,4 @@
--- 鸡汤脚本 - 纯白背景 + 脚本中心折叠菜单（五开关），手机优化
+-- 鸡汤脚本 - 纯白背景 + 脚本中心折叠（上移），五开关，手机优化
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local UserInputService = game:GetService("UserInputService")
@@ -9,38 +9,37 @@ screenGui.Name = "鸡汤脚本"
 screenGui.Parent = player:WaitForChild("PlayerGui")
 screenGui.ResetOnSpawn = false
 
--- ========== 主窗口（纯白背景，初始高度 120） ==========
+-- ========== 主窗口（纯白） ==========
 local mainFrame = Instance.new("Frame")
-mainFrame.Size = UDim2.new(0, 320, 0, 120)          -- 初始收起高度
-mainFrame.Position = UDim2.new(0.5, -160, 0.5, -60) -- 居中（高度一半）
-mainFrame.BackgroundColor3 = Color3.new(1, 1, 1)    -- 纯白
-mainFrame.BackgroundTransparency = 0                -- 不透明
+mainFrame.Size = UDim2.new(0, 320, 0, 120)          -- 初始高度
+mainFrame.Position = UDim2.new(0.5, -160, 0.5, -60)
+mainFrame.BackgroundColor3 = Color3.new(1, 1, 1)
+mainFrame.BackgroundTransparency = 0
 mainFrame.Parent = screenGui
 mainFrame.ClipsDescendants = true
+mainFrame.ZIndex = 1
 
--- 圆角（可选）
 local corner = Instance.new("UICorner")
 corner.CornerRadius = UDim.new(0, 12)
 corner.Parent = mainFrame
 
--- 边框（让白色窗口可见）
 local stroke = Instance.new("UIStroke")
 stroke.Color = Color3.fromRGB(200, 200, 200)
 stroke.Thickness = 1
 stroke.Parent = mainFrame
 
--- ========== 标题（黑色文字） ==========
+-- ========== 标题（黑色） ==========
 local title = Instance.new("TextLabel")
 title.Size = UDim2.new(1, 0, 0, 35)
 title.Position = UDim2.new(0, 0, 0, 5)
 title.BackgroundTransparency = 1
 title.Text = "🍲 鸡汤脚本"
-title.TextColor3 = Color3.new(0, 0, 0)              -- 黑色
+title.TextColor3 = Color3.new(0, 0, 0)
 title.TextScaled = true
 title.Font = Enum.Font.GothamBold
 title.Parent = mainFrame
 
--- ========== 缩小按钮（—） ==========
+-- ========== 缩小按钮 ==========
 local minimizeBtn = Instance.new("TextButton")
 minimizeBtn.Size = UDim2.new(0, 30, 0, 30)
 minimizeBtn.Position = UDim2.new(1, -40, 0, 5)
@@ -54,12 +53,12 @@ minCorner.CornerRadius = UDim.new(0, 6)
 minCorner.Parent = minimizeBtn
 minimizeBtn.Parent = mainFrame
 
--- ========== “脚本中心”按钮（灰色背景，黑色文字） ==========
+-- ========== “脚本中心”按钮（上移到标题下方，使用 Offset） ==========
 local centerBtn = Instance.new("TextButton")
 centerBtn.Size = UDim2.new(0.8, 0, 0, 40)
-centerBtn.Position = UDim2.new(0.1, 0, 0.45, 0)     -- 在标题下方
+centerBtn.Position = UDim2.new(0.1, 0, 0, 50)        -- Y 绝对偏移 50（标题下方5像素）
 centerBtn.BackgroundColor3 = Color3.fromRGB(230, 230, 230)
-centerBtn.Text = "📂 脚本中心"
+centerBtn.Text = "📂 脚本中心 ▼"
 centerBtn.TextColor3 = Color3.new(0, 0, 0)
 centerBtn.TextScaled = true
 centerBtn.Font = Enum.Font.GothamSemibold
@@ -68,16 +67,16 @@ centerCorner.CornerRadius = UDim.new(0, 8)
 centerCorner.Parent = centerBtn
 centerBtn.Parent = mainFrame
 
--- ========== 列表容器（存放五个功能按钮，初始隐藏） ==========
+-- ========== 列表容器（位于“脚本中心”下方） ==========
 local listContainer = Instance.new("Frame")
-listContainer.Size = UDim2.new(1, 0, 1, -90)        -- 填满标题+中心按钮下方的空间
-listContainer.Position = UDim2.new(0, 0, 0, 90)      -- 从 Y=90 开始
+listContainer.Size = UDim2.new(1, 0, 1, -95)         -- 宽度100%，高度为父容器高度-95（留出标题和中心按钮）
+listContainer.Position = UDim2.new(0, 0, 0, 95)      -- 从 Y=95 开始
 listContainer.BackgroundTransparency = 1
 listContainer.Visible = false
 listContainer.Parent = mainFrame
 listContainer.ClipsDescendants = true
 
--- ========== 五个功能按钮（放在容器内） ==========
+-- ========== 五个功能按钮（在列表容器内） ==========
 local buttons = {}
 local buttonData = {
     { text = "🥚 偷一个蛋", color = Color3.fromRGB(50, 180, 230), y = 0.05, script = "https://raw.githubusercontent.com/caomod2077/Script/refs/heads/main/Fn-stealanegg.lua" },
@@ -87,9 +86,9 @@ local buttonData = {
     { text = "❌ XK脚本", color = Color3.fromRGB(160, 50, 200), y = 0.77, script = "https://raw.githubusercontent.com/SyndromeXph/XK-Script/refs/heads/main/XoneK-Loader.luau" }
 }
 
-for i, data in ipairs(buttonData) do
+for _, data in ipairs(buttonData) do
     local btn = Instance.new("TextButton")
-    btn.Size = UDim2.new(0.8, 0, 0, 40)              -- 高度 40
+    btn.Size = UDim2.new(0.8, 0, 0, 40)
     btn.Position = UDim2.new(0.1, 0, data.y, 0)
     btn.BackgroundColor3 = data.color
     btn.Text = data.text
@@ -103,7 +102,7 @@ for i, data in ipairs(buttonData) do
     buttons[#buttons + 1] = { btn = btn, script = data.script, name = data.text:gsub("[%p%w]","") }
 end
 
--- ========== 执行函数 ==========
+-- ========== 执行脚本函数 ==========
 local function executeScript(url, scriptName)
     task.spawn(function()
         local success, err = pcall(function()
@@ -127,7 +126,6 @@ local function executeScript(url, scriptName)
     end)
 end
 
--- 绑定按钮点击
 for _, item in ipairs(buttons) do
     item.btn.MouseButton1Click:Connect(function()
         executeScript(item.script, item.name)
@@ -139,41 +137,27 @@ local isExpanded = false
 local function toggleList()
     isExpanded = not isExpanded
     if isExpanded then
-        mainFrame.Size = UDim2.new(0, 320, 0, 400)
+        mainFrame.Size = UDim2.new(0, 320, 0, 400)    -- 展开高度
         listContainer.Visible = true
         centerBtn.Text = "📂 脚本中心 ▲"
     else
-        mainFrame.Size = UDim2.new(0, 320, 0, 120)
+        mainFrame.Size = UDim2.new(0, 320, 0, 120)    -- 收起高度
         listContainer.Visible = false
         centerBtn.Text = "📂 脚本中心 ▼"
     end
 end
-
 centerBtn.MouseButton1Click:Connect(toggleList)
 
--- ========== 缩小 / 展开 ==========
-local function minimize()
-    mainFrame.Visible = false
-    miniIcon.Visible = true
-end
-
-local function expand()
-    mainFrame.Visible = true
-    miniIcon.Visible = false
-    -- 展开时保持当前折叠状态（不自动展开列表）
-end
-
-minimizeBtn.MouseButton1Click:Connect(minimize)
-
--- ========== 小图标（缩小时显示） ==========
+-- ========== 缩小 / 展开（小鸡图标） ==========
 local miniIcon = Instance.new("TextButton")
 miniIcon.Size = UDim2.new(0, 55, 0, 55)
-miniIcon.Position = UDim2.new(0, 10, 1, -70)
+miniIcon.Position = UDim2.new(0.02, 0, 1, -70)
 miniIcon.BackgroundColor3 = Color3.fromRGB(255, 180, 50)
 miniIcon.Text = "🐔"
 miniIcon.TextScaled = true
 miniIcon.Visible = false
 miniIcon.Parent = screenGui
+miniIcon.ZIndex = 10
 local iconCorner = Instance.new("UICorner")
 iconCorner.CornerRadius = UDim.new(1, 0)
 iconCorner.Parent = miniIcon
@@ -182,7 +166,19 @@ iconStroke.Color = Color3.new(1, 1, 1)
 iconStroke.Thickness = 2
 iconStroke.Parent = miniIcon
 
--- ========== 小鸡图标拖拽（支持触屏） ==========
+local function minimize()
+    mainFrame.Visible = false
+    miniIcon.Visible = true
+end
+
+local function expand()
+    mainFrame.Visible = true
+    miniIcon.Visible = false
+end
+
+minimizeBtn.MouseButton1Click:Connect(minimize)
+
+-- 小鸡图标拖拽 + 点击展开（修复）
 local iconDragging = false
 local iconDragStart = nil
 local iconStartPos = nil
@@ -221,7 +217,7 @@ miniIcon.InputEnded:Connect(function(input)
     end
 end)
 
--- ========== 主窗口拖拽（支持触屏） ==========
+-- ========== 主窗口拖拽 ==========
 local dragging = false
 local dragStartPos = nil
 local startFramePos = nil
