@@ -1,4 +1,4 @@
--- 鸡汤脚本 - 优化版（轻量背景，适合手机拖动）
+-- 鸡汤脚本 - 五开关版（偷一个蛋、黑白脚本、夜脚本、Rob脚本、XK脚本），手机优化
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local UserInputService = game:GetService("UserInputService")
@@ -9,14 +9,14 @@ screenGui.Name = "鸡汤脚本"
 screenGui.Parent = player:WaitForChild("PlayerGui")
 screenGui.ResetOnSpawn = false
 
--- ========== 主窗口（高度 340，纯色背景） ==========
+-- ========== 主窗口（高度 400，容纳五个按钮） ==========
 local mainFrame = Instance.new("Frame")
-mainFrame.Size = UDim2.new(0, 320, 0, 340)
-mainFrame.Position = UDim2.new(0.5, -160, 0.5, -170)
-mainFrame.BackgroundColor3 = Color3.fromRGB(255, 140, 50)  -- 橙色
+mainFrame.Size = UDim2.new(0, 320, 0, 400)
+mainFrame.Position = UDim2.new(0.5, -160, 0.5, -200)  -- 居中调整
+mainFrame.BackgroundColor3 = Color3.fromRGB(255, 140, 50)
 mainFrame.BackgroundTransparency = 0.25
 mainFrame.Parent = screenGui
-mainFrame.ClipsDescendants = true  -- 提高渲染效率
+mainFrame.ClipsDescendants = true
 
 -- 圆角
 local corner = Instance.new("UICorner")
@@ -65,13 +65,14 @@ iconStroke.Color = Color3.new(1, 1, 1)
 iconStroke.Thickness = 2
 iconStroke.Parent = miniIcon
 
--- ========== 四个功能按钮（颜色各异） ==========
+-- ========== 五个功能按钮（颜色各异） ==========
 local buttons = {}
 local buttonData = {
-    { text = "🥚 偷一个蛋", color = Color3.fromRGB(50, 180, 230), y = 0.15, script = "https://raw.githubusercontent.com/caomod2077/Script/refs/heads/main/Fn-stealanegg.lua" },
-    { text = "⚫ 黑白脚本", color = Color3.fromRGB(100, 100, 100), y = 0.36, script = "https://raw.githubusercontent.com/tfcygvunbind/Apple/main/黑白脚本加载器" },
-    { text = "🌙 夜脚本", color = Color3.fromRGB(30, 50, 130), y = 0.57, script = "https://raw.githubusercontent.com/ylt410/roblox-Script/refs/heads/main/yejiaoben" },
-    { text = "🤖 Rob脚本", color = Color3.fromRGB(200, 80, 30), y = 0.78, script = "https://raw.githubusercontent.com/idrobsc/rob_script/refs/heads/main/rob.v4" }
+    { text = "🥚 偷一个蛋", color = Color3.fromRGB(50, 180, 230), y = 0.12, script = "https://raw.githubusercontent.com/caomod2077/Script/refs/heads/main/Fn-stealanegg.lua" },
+    { text = "⚫ 黑白脚本", color = Color3.fromRGB(100, 100, 100), y = 0.30, script = "https://raw.githubusercontent.com/tfcygvunbind/Apple/main/黑白脚本加载器" },
+    { text = "🌙 夜脚本", color = Color3.fromRGB(30, 50, 130), y = 0.48, script = "https://raw.githubusercontent.com/ylt410/roblox-Script/refs/heads/main/yejiaoben" },
+    { text = "🤖 Rob脚本", color = Color3.fromRGB(200, 80, 30), y = 0.66, script = "https://raw.githubusercontent.com/idrobsc/rob_script/refs/heads/main/rob.v4" },
+    { text = "❌ XK脚本", color = Color3.fromRGB(160, 50, 200), y = 0.84, script = "https://raw.githubusercontent.com/SyndromeXph/XK-Script/refs/heads/main/XoneK-Loader.luau" }  -- 紫色
 }
 
 for i, data in ipairs(buttonData) do
@@ -87,7 +88,7 @@ for i, data in ipairs(buttonData) do
     btnCorner.CornerRadius = UDim.new(0, 10)
     btnCorner.Parent = btn
     btn.Parent = mainFrame
-    buttons[#buttons + 1] = { btn = btn, script = data.script, name = data.text:gsub("[%p%w]","") }  -- 简易名称
+    buttons[#buttons + 1] = { btn = btn, script = data.script, name = data.text:gsub("[%p%w]","") }
 end
 
 -- ========== 执行函数 ==========
@@ -134,7 +135,7 @@ end
 
 minimizeBtn.MouseButton1Click:Connect(minimize)
 
--- ========== 小鸡图标拖拽（优化：轻量更新） ==========
+-- ========== 小鸡图标拖拽（优化） ==========
 local iconDragging = false
 local iconDragStart = nil
 local iconStartPos = nil
@@ -155,7 +156,6 @@ miniIcon.InputChanged:Connect(function(input)
         if delta.Magnitude > 3 then
             isDragged = true
         end
-        -- 直接更新，无额外开销
         miniIcon.Position = UDim2.new(
             iconStartPos.X.Scale,
             iconStartPos.X.Offset + delta.X,
@@ -174,7 +174,7 @@ miniIcon.InputEnded:Connect(function(input)
     end
 end)
 
--- ========== 主窗口拖拽（优化：轻量更新） ==========
+-- ========== 主窗口拖拽（优化） ==========
 local dragging = false
 local dragStartPos = nil
 local startFramePos = nil
