@@ -1,4 +1,4 @@
--- 鸡汤脚本 - 纯白背景 + 脚本中心折叠（滚动列表，加粗侧边滚动条），五开关，手机优化
+-- 鸡汤脚本 - 纯白背景 + 脚本中心折叠（滚动列表），六开关，手机优化
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local UserInputService = game:GetService("UserInputService")
@@ -69,27 +69,28 @@ centerBtn.Parent = mainFrame
 
 -- ========== 列表容器（滚动框，加粗侧边滚动条） ==========
 local listContainer = Instance.new("ScrollingFrame")
-listContainer.Size = UDim2.new(1, 0, 1, -95)          -- 宽度100%，高度为父容器高度-95
-listContainer.Position = UDim2.new(0, 0, 0, 95)       -- 从 Y=95 开始
+listContainer.Size = UDim2.new(1, 0, 1, -95)
+listContainer.Position = UDim2.new(0, 0, 0, 95)
 listContainer.BackgroundTransparency = 1
 listContainer.Visible = false
 listContainer.Parent = mainFrame
 listContainer.ClipsDescendants = true
-listContainer.ScrollBarThickness = 10                  -- 加粗滚动条（方便手指操作）
-listContainer.ScrollBarImageColor3 = Color3.fromRGB(120, 120, 120) -- 更明显的灰色
-listContainer.ScrollingDirection = Enum.ScrollingDirection.Y   -- 垂直滚动
+listContainer.ScrollBarThickness = 10
+listContainer.ScrollBarImageColor3 = Color3.fromRGB(120, 120, 120)
+listContainer.ScrollingDirection = Enum.ScrollingDirection.Y
 listContainer.BottomImage = "rbxasset://textures/ui/Scroll/scroll-bottom.png"
 listContainer.MidImage = "rbxasset://textures/ui/Scroll/scroll-mid.png"
 listContainer.TopImage = "rbxasset://textures/ui/Scroll/scroll-top.png"
 
--- ========== 生成五个功能按钮 ==========
+-- ========== 生成六个功能按钮 ==========
 local buttons = {}
 local buttonData = {
     { text = "🥚 偷一个蛋", color = Color3.fromRGB(50, 180, 230), script = "https://raw.githubusercontent.com/caomod2077/Script/refs/heads/main/Fn-stealanegg.lua" },
     { text = "⚫ 黑白脚本", color = Color3.fromRGB(100, 100, 100), script = "https://raw.githubusercontent.com/tfcygvunbind/Apple/main/黑白脚本加载器" },
     { text = "🌙 夜脚本", color = Color3.fromRGB(30, 50, 130), script = "https://raw.githubusercontent.com/ylt410/roblox-Script/refs/heads/main/yejiaoben" },
     { text = "🤖 Rob脚本", color = Color3.fromRGB(200, 80, 30), script = "https://raw.githubusercontent.com/idrobsc/rob_script/refs/heads/main/rob.v4" },
-    { text = "❌ XK脚本", color = Color3.fromRGB(160, 50, 200), script = "https://raw.githubusercontent.com/SyndromeXph/XK-Script/refs/heads/main/XoneK-Loader.luau" }
+    { text = "❌ XK脚本", color = Color3.fromRGB(160, 50, 200), script = "https://raw.githubusercontent.com/SyndromeXph/XK-Script/refs/heads/main/XoneK-Loader.luau" },
+    { text = "🍂 落叶中心", color = Color3.fromRGB(34, 139, 34), script = "https://raw.githubusercontent.com/krlpl/Deciduous-center-LS/main/%E8%90%BD%E5%8F%B6%E4%B8%AD%E5%BF%83%E6%B7%B7%E6%B7%86.txt" }  -- 森林绿
 }
 
 local buttonHeight = 38
@@ -115,12 +116,20 @@ end
 
 listContainer.CanvasSize = UDim2.new(0, 0, 0, totalHeight)
 
--- ========== 执行函数 ==========
+-- ========== 执行函数（支持带前置变量的脚本） ==========
 local function executeScript(url, scriptName)
     task.spawn(function()
         local success, err = pcall(function()
+            -- 对于“落叶中心”特殊处理：先设置全局变量
+            if scriptName == "落叶中心" then
+                getgenv().LS = "落叶中心"
+            end
             local result = loadstring(game:HttpGet(url))
-            if result then result() else warn("脚本加载失败: " .. url) end
+            if result then
+                result()
+            else
+                warn("脚本加载失败: " .. url)
+            end
         end)
         if not success then
             warn("执行 [" .. scriptName .. "] 出错: " .. tostring(err))
