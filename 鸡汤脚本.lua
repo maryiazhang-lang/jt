@@ -1,4 +1,4 @@
--- 鸡汤脚本 - 纯白背景 + 脚本中心折叠（无滚动条，纯触摸滑动），六开关，手机优化
+-- 鸡汤脚本 - 纯白背景 + 脚本中心折叠 + 颜色设置，六开关，手机优化
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local UserInputService = game:GetService("UserInputService")
@@ -38,8 +38,8 @@ dragHandle.ZIndex = 2
 
 -- 标题
 local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1, 0, 0, 35)
-title.Position = UDim2.new(0, 0, 0, 5)
+title.Size = UDim2.new(1, -70, 0, 35)  -- 留出右侧按钮空间
+title.Position = UDim2.new(0, 5, 0, 5)
 title.BackgroundTransparency = 1
 title.Text = "🍲 鸡汤脚本"
 title.TextColor3 = Color3.new(0, 0, 0)
@@ -47,6 +47,7 @@ title.TextScaled = true
 title.Font = Enum.Font.GothamBold
 title.Parent = mainFrame
 
+-- ========== 右上角按钮组 ==========
 -- 缩小按钮
 local minimizeBtn = Instance.new("TextButton")
 minimizeBtn.Size = UDim2.new(0, 30, 0, 30)
@@ -60,6 +61,20 @@ local minCorner = Instance.new("UICorner")
 minCorner.CornerRadius = UDim.new(0, 6)
 minCorner.Parent = minimizeBtn
 minimizeBtn.Parent = mainFrame
+
+-- 设置按钮
+local settingBtn = Instance.new("TextButton")
+settingBtn.Size = UDim2.new(0, 30, 0, 30)
+settingBtn.Position = UDim2.new(1, -75, 0, 5)   -- 在缩小按钮左侧
+settingBtn.BackgroundColor3 = Color3.fromRGB(220, 220, 220)
+settingBtn.Text = "⚙️"
+settingBtn.TextColor3 = Color3.new(0, 0, 0)
+settingBtn.TextScaled = true
+settingBtn.Font = Enum.Font.GothamBold
+local setCorner = Instance.new("UICorner")
+setCorner.CornerRadius = UDim.new(0, 6)
+setCorner.Parent = settingBtn
+settingBtn.Parent = mainFrame
 
 -- “脚本中心”按钮
 local centerBtn = Instance.new("TextButton")
@@ -75,7 +90,7 @@ centerCorner.CornerRadius = UDim.new(0, 8)
 centerCorner.Parent = centerBtn
 centerBtn.Parent = mainFrame
 
--- ========== 列表容器（滚动框，无滚动条，纯触摸滑动） ==========
+-- ========== 列表容器（滚动框，无滚动条） ==========
 local listContainer = Instance.new("ScrollingFrame")
 listContainer.Size = UDim2.new(1, 0, 1, -95)
 listContainer.Position = UDim2.new(0, 0, 0, 95)
@@ -83,10 +98,10 @@ listContainer.BackgroundTransparency = 1
 listContainer.Visible = false
 listContainer.Parent = mainFrame
 listContainer.ClipsDescendants = true
-listContainer.ScrollBarThickness = 0                     -- 完全移除滚动条
+listContainer.ScrollBarThickness = 0
 listContainer.ScrollingDirection = Enum.ScrollingDirection.Y
-listContainer.ElasticBehavior = Enum.ElasticBehavior.Never  -- 禁用回弹效果，更自然
-listContainer.BottomImage = ""                           -- 清除默认滚动条图片
+listContainer.ElasticBehavior = Enum.ElasticBehavior.Never
+listContainer.BottomImage = ""
 listContainer.MidImage = ""
 listContainer.TopImage = ""
 
@@ -124,7 +139,7 @@ end
 
 listContainer.CanvasSize = UDim2.new(0, 0, 0, totalHeight)
 
--- ========== 执行函数 ==========
+-- ========== 执行脚本函数 ==========
 local function executeScript(url, scriptName)
     task.spawn(function()
         local success, err = pcall(function()
@@ -172,6 +187,112 @@ local function toggleList()
     end
 end
 centerBtn.MouseButton1Click:Connect(toggleList)
+
+-- ========== 设置窗口 ==========
+local settingFrame = Instance.new("Frame")
+settingFrame.Size = UDim2.new(0, 260, 0, 200)
+settingFrame.Position = UDim2.new(0.5, -130, 0.5, -100)
+settingFrame.BackgroundColor3 = Color3.new(1, 1, 1)
+settingFrame.BackgroundTransparency = 0
+settingFrame.Visible = false
+settingFrame.Parent = screenGui
+settingFrame.ZIndex = 20
+local setCorner2 = Instance.new("UICorner")
+setCorner2.CornerRadius = UDim.new(0, 12)
+setCorner2.Parent = settingFrame
+local setStroke = Instance.new("UIStroke")
+setStroke.Color = Color3.fromRGB(180, 180, 180)
+setStroke.Thickness = 1
+setStroke.Parent = settingFrame
+
+-- 设置窗口标题
+local setTitle = Instance.new("TextLabel")
+setTitle.Size = UDim2.new(1, 0, 0, 35)
+setTitle.Position = UDim2.new(0, 0, 0, 5)
+setTitle.BackgroundTransparency = 1
+setTitle.Text = "🎨 选择颜色"
+setTitle.TextColor3 = Color3.new(0, 0, 0)
+setTitle.TextScaled = true
+setTitle.Font = Enum.Font.GothamBold
+setTitle.Parent = settingFrame
+
+-- 关闭按钮
+local closeSetBtn = Instance.new("TextButton")
+closeSetBtn.Size = UDim2.new(0, 30, 0, 30)
+closeSetBtn.Position = UDim2.new(1, -35, 0, 5)
+closeSetBtn.BackgroundColor3 = Color3.fromRGB(220, 220, 220)
+closeSetBtn.Text = "✕"
+closeSetBtn.TextColor3 = Color3.new(0, 0, 0)
+closeSetBtn.TextScaled = true
+closeSetBtn.Font = Enum.Font.GothamBold
+local closeCorner = Instance.new("UICorner")
+closeCorner.CornerRadius = UDim.new(0, 6)
+closeCorner.Parent = closeSetBtn
+closeSetBtn.Parent = settingFrame
+
+-- 颜色选择网格（两行，每行4个）
+local colors = {
+    Color3.new(1, 1, 1),          -- 白
+    Color3.fromRGB(255, 100, 100),-- 红
+    Color3.fromRGB(100, 200, 255),-- 浅蓝
+    Color3.fromRGB(255, 200, 100),-- 橙
+    Color3.fromRGB(200, 255, 100),-- 黄绿
+    Color3.fromRGB(200, 150, 255),-- 紫
+    Color3.fromRGB(100, 255, 200),-- 青
+    Color3.fromRGB(255, 150, 200) -- 粉
+}
+local gridSize = 40
+local spacingX = 20
+local spacingY = 20
+local startX = (260 - (4 * gridSize + 3 * spacingX)) / 2
+local startY = 50
+
+for i, color in ipairs(colors) do
+    local col = (i-1) % 4
+    local row = math.floor((i-1) / 4)
+    local btn = Instance.new("TextButton")
+    btn.Size = UDim2.new(0, gridSize, 0, gridSize)
+    btn.Position = UDim2.new(0, startX + col * (gridSize + spacingX), 0, startY + row * (gridSize + spacingY))
+    btn.BackgroundColor3 = color
+    btn.BackgroundTransparency = 0
+    btn.BorderSizePixel = 1
+    btn.BorderColor3 = Color3.fromRGB(150, 150, 150)
+    btn.Text = ""
+    local btnCorner2 = Instance.new("UICorner")
+    btnCorner2.CornerRadius = UDim.new(0, 6)
+    btnCorner2.Parent = btn
+    btn.Parent = settingFrame
+    btn.MouseButton1Click:Connect(function()
+        mainFrame.BackgroundColor3 = color
+        settingFrame.Visible = false
+    end)
+end
+
+-- 设置窗口开关
+local function openSettings()
+    settingFrame.Visible = true
+end
+
+local function closeSettings()
+    settingFrame.Visible = false
+end
+
+settingBtn.MouseButton1Click:Connect(openSettings)
+closeSetBtn.MouseButton1Click:Connect(closeSettings)
+
+-- 点击设置窗口外部关闭（点击主窗口或空白区域）
+-- 但为了防止误触，仅当设置可见时，点击主窗口关闭设置
+screenGui.InputBegan:Connect(function(input)
+    if settingFrame.Visible and input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        -- 检查点击是否在设置窗口内
+        local pos = input.Position
+        local absPos = settingFrame.AbsolutePosition
+        local size = settingFrame.AbsoluteSize
+        if not (pos.X >= absPos.X and pos.X <= absPos.X + size.X and pos.Y >= absPos.Y and pos.Y <= absPos.Y + size.Y) then
+            closeSettings()
+        end
+    end
+end)
 
 -- ========== 缩小 / 展开（小鸡图标） ==========
 local miniIcon = Instance.new("TextButton")
