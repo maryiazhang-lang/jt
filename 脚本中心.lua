@@ -1,0 +1,1222 @@
+-- 鸡汤脚本 - 一体式滚动版
+-- 主窗口本身就是 ScrollingFrame
+-- 支持：整体滚动 / 拖动 / 缩小 / 小鸡图标 / 设置颜色
+
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+--------------------------------------------------
+-- 防止重复执行
+--------------------------------------------------
+
+local oldGui = playerGui:FindFirstChild("脚本中心")
+if oldGui then
+    oldGui:Destroy()
+end
+
+--------------------------------------------------
+-- ScreenGui
+--------------------------------------------------
+
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "脚本中心"
+screenGui.ResetOnSpawn = false
+screenGui.Parent = playerGui
+
+--------------------------------------------------
+-- 主窗口
+-- ⭐ 直接使用 ScrollingFrame
+--------------------------------------------------
+
+local mainFrame = Instance.new("ScrollingFrame")
+
+mainFrame.Name = "MainFrame"
+
+-- 窗口大小
+mainFrame.Size = UDim2.new(0, 320, 0, 400)
+
+mainFrame.Position = UDim2.new(
+    0.5,
+    -160,
+    0.5,
+    -200
+)
+
+mainFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+
+mainFrame.BorderSizePixel = 0
+
+-- ⭐ 一体式滚动条
+mainFrame.ScrollBarThickness = 7
+mainFrame.ScrollBarImageColor3 = Color3.fromRGB(130, 130, 130)
+mainFrame.ScrollBarImageTransparency = 0
+
+mainFrame.ScrollingDirection = Enum.ScrollingDirection.Y
+
+mainFrame.ElasticBehavior = Enum.ElasticBehavior.Never
+
+mainFrame.CanvasSize = UDim2.new(
+    0,
+    0,
+    0,
+    520
+)
+
+mainFrame.AutomaticCanvasSize = Enum.AutomaticSize.None
+
+mainFrame.ClipsDescendants = true
+
+mainFrame.ZIndex = 1
+
+mainFrame.Parent = screenGui
+
+--------------------------------------------------
+-- 圆角
+--------------------------------------------------
+
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0, 12)
+corner.Parent = mainFrame
+
+--------------------------------------------------
+-- 边框
+--------------------------------------------------
+
+local stroke = Instance.new("UIStroke")
+stroke.Color = Color3.fromRGB(200, 200, 200)
+stroke.Thickness = 1
+stroke.Parent = mainFrame
+
+--------------------------------------------------
+-- 内容区域
+--------------------------------------------------
+
+local contentFrame = Instance.new("Frame")
+
+contentFrame.Name = "Content"
+
+contentFrame.Size = UDim2.new(
+    1,
+    -10,
+    0,
+    520
+)
+
+contentFrame.Position = UDim2.new(
+    0,
+    0,
+    0,
+    0
+)
+
+contentFrame.BackgroundTransparency = 1
+
+contentFrame.ZIndex = 2
+
+contentFrame.Parent = mainFrame
+
+--------------------------------------------------
+-- 标题
+--------------------------------------------------
+
+local title = Instance.new("TextLabel")
+
+title.Name = "Title"
+
+title.Size = UDim2.new(
+    0,
+    200,
+    0,
+    40
+)
+
+title.Position = UDim2.new(
+    0.5,
+    -100,
+    0,
+    5
+)
+
+title.BackgroundTransparency = 1
+
+title.Text = "脚本中心"
+
+title.TextColor3 = Color3.fromRGB(
+    0,
+    0,
+    0
+)
+
+title.TextScaled = true
+
+title.Font = Enum.Font.GothamBold
+
+title.ZIndex = 3
+
+title.Parent = contentFrame
+
+--------------------------------------------------
+-- 设置按钮
+--------------------------------------------------
+
+local settingBtn = Instance.new("TextButton")
+
+settingBtn.Name = "SettingButton"
+
+settingBtn.Size = UDim2.new(
+    0,
+    30,
+    0,
+    30
+)
+
+settingBtn.Position = UDim2.new(
+    0,
+    5,
+    0,
+    5
+)
+
+settingBtn.BackgroundColor3 =
+    Color3.fromRGB(220, 220, 220)
+
+settingBtn.Text = "⚙️"
+
+settingBtn.TextColor3 =
+    Color3.fromRGB(0, 0, 0)
+
+settingBtn.TextScaled = true
+
+settingBtn.Font =
+    Enum.Font.GothamBold
+
+settingBtn.AutoButtonColor = true
+
+settingBtn.ZIndex = 5
+
+settingBtn.Parent = contentFrame
+
+local setCorner = Instance.new("UICorner")
+setCorner.CornerRadius = UDim.new(0, 6)
+setCorner.Parent = settingBtn
+
+--------------------------------------------------
+-- 缩小按钮
+--------------------------------------------------
+
+local minimizeBtn = Instance.new("TextButton")
+
+minimizeBtn.Name = "MinimizeButton"
+
+minimizeBtn.Size = UDim2.new(
+    0,
+    30,
+    0,
+    30
+)
+
+minimizeBtn.Position = UDim2.new(
+    1,
+    -45,
+    0,
+    5
+)
+
+minimizeBtn.BackgroundColor3 =
+    Color3.fromRGB(220, 220, 220)
+
+minimizeBtn.Text = "—"
+
+minimizeBtn.TextColor3 =
+    Color3.fromRGB(0, 0, 0)
+
+minimizeBtn.TextScaled = true
+
+minimizeBtn.Font =
+    Enum.Font.GothamBold
+
+minimizeBtn.AutoButtonColor = true
+
+minimizeBtn.ZIndex = 5
+
+minimizeBtn.Parent = contentFrame
+
+local minCorner = Instance.new("UICorner")
+minCorner.CornerRadius = UDim.new(0, 6)
+minCorner.Parent = minimizeBtn
+
+--------------------------------------------------
+-- 脚本中心标题
+--------------------------------------------------
+
+local centerTitle = Instance.new("TextLabel")
+
+centerTitle.Size = UDim2.new(
+    0.8,
+    0,
+    0,
+    35
+)
+
+centerTitle.Position = UDim2.new(
+    0.1,
+    0,
+    0,
+    48
+)
+
+centerTitle.BackgroundTransparency = 1
+
+centerTitle.Text = "📂 脚本中心"
+
+centerTitle.TextColor3 =
+    Color3.fromRGB(0, 0, 0)
+
+centerTitle.TextScaled = true
+
+centerTitle.Font =
+    Enum.Font.GothamBold
+
+centerTitle.ZIndex = 3
+
+centerTitle.Parent = contentFrame
+
+--------------------------------------------------
+-- 六个脚本按钮
+--------------------------------------------------
+
+local buttonData = {
+
+    {
+        text = "🥚 偷一个蛋",
+        color = Color3.fromRGB(
+            50,
+            180,
+            230
+        ),
+        script =
+        "https://raw.githubusercontent.com/caomod2077/Script/refs/heads/main/Fn-stealanegg.lua"
+    },
+
+    {
+        text = "⚫ 黑白脚本",
+        color = Color3.fromRGB(
+            100,
+            100,
+            100
+        ),
+        script =
+        "https://raw.githubusercontent.com/tfcygvunbind/Apple/main/黑白脚本加载器"
+    },
+
+    {
+        text = "🌙 夜脚本",
+        color = Color3.fromRGB(
+            30,
+            50,
+            130
+        ),
+        script =
+        "https://raw.githubusercontent.com/ylt410/roblox-Script/refs/heads/main/yejiaoben"
+    },
+
+    {
+        text = "🤖 Rob脚本",
+        color = Color3.fromRGB(
+            200,
+            80,
+            30
+        ),
+        script =
+        "https://raw.githubusercontent.com/idrobsc/rob_script/refs/heads/main/rob.v4"
+    },
+
+    {
+        text = "❌ XK脚本",
+        color = Color3.fromRGB(
+            160,
+            50,
+            200
+        ),
+        script =
+        "https://raw.githubusercontent.com/SyndromeXph/XK-Script/refs/heads/main/XoneK-Loader.luau"
+    },
+
+    {
+        text = "🍂 落叶中心",
+        color = Color3.fromRGB(
+            34,
+            139,
+            34
+        ),
+        script =
+        "https://raw.githubusercontent.com/krlpl/Deciduous-center-LS/main/%E8%90%BD%E5%8F%B6%E4%B8%AD%E5%BF%83%E6%B7%B7%E6%B7%86.txt"
+    }
+}
+
+local buttons = {}
+
+local buttonHeight = 42
+local spacing = 10
+
+local firstButtonY = 92
+
+for i, data in ipairs(buttonData) do
+
+    local btn = Instance.new("TextButton")
+
+    btn.Size = UDim2.new(
+        0.8,
+        0,
+        0,
+        buttonHeight
+    )
+
+    btn.Position = UDim2.new(
+        0.1,
+        0,
+        0,
+        firstButtonY +
+        (i - 1) *
+        (buttonHeight + spacing)
+    )
+
+    btn.BackgroundColor3 =
+        data.color
+
+    btn.Text =
+        data.text
+
+    btn.TextColor3 =
+        Color3.fromRGB(
+            255,
+            255,
+            255
+        )
+
+    btn.TextScaled = true
+
+    btn.Font =
+        Enum.Font.GothamSemibold
+
+    btn.AutoButtonColor = true
+
+    btn.ZIndex = 4
+
+    btn.Parent = contentFrame
+
+    local btnCorner = Instance.new("UICorner")
+
+    btnCorner.CornerRadius =
+        UDim.new(0, 8)
+
+    btnCorner.Parent = btn
+
+    buttons[#buttons + 1] = {
+        btn = btn,
+        script = data.script,
+        name = data.text:gsub(
+            "[%p%w]",
+            ""
+        )
+    }
+
+end
+
+--------------------------------------------------
+-- 更新滚动区域高度
+--------------------------------------------------
+
+local contentHeight =
+    firstButtonY +
+    #buttonData *
+    (buttonHeight + spacing) +
+    20
+
+contentFrame.Size =
+    UDim2.new(
+        1,
+        -10,
+        0,
+        contentHeight
+    )
+
+mainFrame.CanvasSize =
+    UDim2.new(
+        0,
+        0,
+        0,
+        contentHeight
+    )
+
+--------------------------------------------------
+-- 执行脚本
+--------------------------------------------------
+
+local function executeScript(
+    url,
+    scriptName
+)
+
+    task.spawn(function()
+
+        local success, err =
+            pcall(function()
+
+                if scriptName ==
+                    "落叶中心"
+                then
+                    getgenv().LS =
+                        "落叶中心"
+                end
+
+                local source =
+                    game:HttpGet(url)
+
+                local func =
+                    loadstring(source)
+
+                if func then
+                    func()
+                else
+                    error(
+                        "loadstring 返回为空"
+                    )
+                end
+
+            end)
+
+        local hint =
+            Instance.new("Hint")
+
+        hint.Parent = workspace
+
+        if success then
+
+            hint.Text =
+                "✅ " ..
+                scriptName ..
+                " 已执行"
+
+            task.wait(2)
+
+        else
+
+            warn(
+                "[脚本中心] " ..
+                tostring(err)
+            )
+
+            hint.Text =
+                "❌ " ..
+                scriptName ..
+                " 执行失败"
+
+            task.wait(3)
+
+        end
+
+        hint:Destroy()
+
+    end)
+
+end
+
+for _, item in ipairs(buttons) do
+
+    item.btn.MouseButton1Click:Connect(
+        function()
+
+            executeScript(
+                item.script,
+                item.name
+            )
+
+        end
+    )
+
+end
+
+--------------------------------------------------
+-- 设置窗口
+--------------------------------------------------
+
+local settingFrame = Instance.new("Frame")
+
+settingFrame.Size =
+    UDim2.new(
+        0,
+        260,
+        0,
+        200
+    )
+
+settingFrame.Position =
+    UDim2.new(
+        0.5,
+        -130,
+        0.5,
+        -100
+    )
+
+settingFrame.BackgroundColor3 =
+    Color3.fromRGB(
+        255,
+        255,
+        255
+    )
+
+settingFrame.Visible = false
+
+settingFrame.ZIndex = 20
+
+settingFrame.Parent =
+    screenGui
+
+local setCorner2 =
+    Instance.new("UICorner")
+
+setCorner2.CornerRadius =
+    UDim.new(0, 12)
+
+setCorner2.Parent =
+    settingFrame
+
+local setStroke =
+    Instance.new("UIStroke")
+
+setStroke.Color =
+    Color3.fromRGB(
+        180,
+        180,
+        180
+    )
+
+setStroke.Thickness = 1
+
+setStroke.Parent =
+    settingFrame
+
+--------------------------------------------------
+-- 设置标题
+--------------------------------------------------
+
+local setTitle =
+    Instance.new("TextLabel")
+
+setTitle.Size =
+    UDim2.new(
+        1,
+        0,
+        0,
+        35
+    )
+
+setTitle.Position =
+    UDim2.new(
+        0,
+        0,
+        0,
+        5
+    )
+
+setTitle.BackgroundTransparency = 1
+
+setTitle.Text = "🎨 选择颜色"
+
+setTitle.TextColor3 =
+    Color3.fromRGB(
+        0,
+        0,
+        0
+    )
+
+setTitle.TextScaled = true
+
+setTitle.Font =
+    Enum.Font.GothamBold
+
+setTitle.ZIndex = 21
+
+setTitle.Parent =
+    settingFrame
+
+--------------------------------------------------
+-- 设置关闭
+--------------------------------------------------
+
+local closeSetBtn =
+    Instance.new("TextButton")
+
+closeSetBtn.Size =
+    UDim2.new(
+        0,
+        30,
+        0,
+        30
+    )
+
+closeSetBtn.Position =
+    UDim2.new(
+        1,
+        -35,
+        0,
+        5
+    )
+
+closeSetBtn.BackgroundColor3 =
+    Color3.fromRGB(
+        220,
+        220,
+        220
+    )
+
+closeSetBtn.Text = "✕"
+
+closeSetBtn.TextColor3 =
+    Color3.fromRGB(
+        0,
+        0,
+        0
+    )
+
+closeSetBtn.TextScaled = true
+
+closeSetBtn.Font =
+    Enum.Font.GothamBold
+
+closeSetBtn.ZIndex = 22
+
+closeSetBtn.Parent =
+    settingFrame
+
+local closeCorner =
+    Instance.new("UICorner")
+
+closeCorner.CornerRadius =
+    UDim.new(0, 6)
+
+closeCorner.Parent =
+    closeSetBtn
+
+--------------------------------------------------
+-- 颜色
+--------------------------------------------------
+
+local colors = {
+
+    Color3.fromRGB(
+        255,
+        255,
+        255
+    ),
+
+    Color3.fromRGB(
+        255,
+        100,
+        100
+    ),
+
+    Color3.fromRGB(
+        100,
+        200,
+        255
+    ),
+
+    Color3.fromRGB(
+        255,
+        200,
+        100
+    ),
+
+    Color3.fromRGB(
+        200,
+        255,
+        100
+    ),
+
+    Color3.fromRGB(
+        200,
+        150,
+        255
+    ),
+
+    Color3.fromRGB(
+        100,
+        255,
+        200
+    ),
+
+    Color3.fromRGB(
+        255,
+        150,
+        200
+    )
+}
+
+local gridSize = 40
+local spacingX = 20
+local spacingY = 20
+
+local startX =
+    (260 -
+    (4 * gridSize +
+    3 * spacingX)) / 2
+
+local startY = 50
+
+for i, color in ipairs(colors) do
+
+    local col =
+        (i - 1) % 4
+
+    local row =
+        math.floor(
+            (i - 1) / 4
+        )
+
+    local btn =
+        Instance.new("TextButton")
+
+    btn.Size =
+        UDim2.new(
+            0,
+            gridSize,
+            0,
+            gridSize
+        )
+
+    btn.Position =
+        UDim2.new(
+            0,
+            startX +
+            col *
+            (gridSize +
+            spacingX),
+
+            0,
+            startY +
+            row *
+            (gridSize +
+            spacingY)
+        )
+
+    btn.BackgroundColor3 =
+        color
+
+    btn.BorderSizePixel = 1
+
+    btn.BorderColor3 =
+        Color3.fromRGB(
+            150,
+            150,
+            150
+        )
+
+    btn.Text = ""
+
+    btn.ZIndex = 22
+
+    btn.Parent =
+        settingFrame
+
+    local btnCorner =
+        Instance.new("UICorner")
+
+    btnCorner.CornerRadius =
+        UDim.new(0, 6)
+
+    btnCorner.Parent = btn
+
+    btn.MouseButton1Click:Connect(
+        function()
+
+            mainFrame.BackgroundColor3 =
+                color
+
+            settingFrame.Visible =
+                false
+
+            settingBtn.BackgroundColor3 =
+                Color3.fromRGB(
+                    220,
+                    220,
+                    220
+                )
+
+        end
+    )
+
+end
+
+--------------------------------------------------
+-- 设置开关
+--------------------------------------------------
+
+settingBtn.MouseButton1Click:Connect(
+    function()
+
+        settingFrame.Visible =
+            not settingFrame.Visible
+
+        if settingFrame.Visible then
+
+            settingBtn.BackgroundColor3 =
+                Color3.fromRGB(
+                    100,
+                    220,
+                    100
+                )
+
+        else
+
+            settingBtn.BackgroundColor3 =
+                Color3.fromRGB(
+                    220,
+                    220,
+                    220
+                )
+
+        end
+
+    end
+)
+
+closeSetBtn.MouseButton1Click:Connect(
+    function()
+
+        settingFrame.Visible =
+            false
+
+        settingBtn.BackgroundColor3 =
+            Color3.fromRGB(
+                220,
+                220,
+                220
+            )
+
+    end
+)
+
+--------------------------------------------------
+-- 主窗口拖动
+--------------------------------------------------
+
+local dragging = false
+local dragStart
+local startPosition
+
+local function startDrag(input)
+
+    dragging = true
+
+    dragStart =
+        input.Position
+
+    startPosition =
+        mainFrame.Position
+
+end
+
+local function updateDrag(input)
+
+    if not dragging then
+        return
+    end
+
+    local delta =
+        input.Position -
+        dragStart
+
+    mainFrame.Position =
+        UDim2.new(
+            startPosition.X.Scale,
+            startPosition.X.Offset +
+                delta.X,
+
+            startPosition.Y.Scale,
+            startPosition.Y.Offset +
+                delta.Y
+        )
+
+end
+
+UserInputService.InputChanged:Connect(
+    function(input)
+
+        if
+            input.UserInputType ==
+            Enum.UserInputType.MouseMovement
+            or
+            input.UserInputType ==
+            Enum.UserInputType.Touch
+        then
+
+            updateDrag(input)
+
+        end
+
+    end
+)
+
+UserInputService.InputEnded:Connect(
+    function(input)
+
+        if
+            input.UserInputType ==
+            Enum.UserInputType.MouseButton1
+            or
+            input.UserInputType ==
+            Enum.UserInputType.Touch
+        then
+
+            dragging = false
+
+        end
+
+    end
+)
+
+--------------------------------------------------
+-- 顶部拖动区域
+--------------------------------------------------
+
+mainFrame.InputBegan:Connect(
+    function(input)
+
+        if
+            input.UserInputType ==
+            Enum.UserInputType.MouseButton1
+            or
+            input.UserInputType ==
+            Enum.UserInputType.Touch
+        then
+
+            local pos =
+                input.Position
+
+            local abs =
+                mainFrame.AbsolutePosition
+
+            local x =
+                pos.X - abs.X
+
+            local y =
+                pos.Y - abs.Y
+
+            -- 顶部 45px
+            if y >= 0 and y <= 45 then
+
+                -- 排除设置和缩小按钮
+                if
+                    x >= 40
+                    and
+                    x <=
+                    mainFrame.AbsoluteSize.X - 45
+                then
+
+                    startDrag(input)
+
+                end
+
+            end
+
+        end
+
+    end
+)
+
+--------------------------------------------------
+--------------------------------------------------
+-- 猫猫图标
+--------------------------------------------------
+
+local miniIcon = Instance.new("ImageButton")
+
+miniIcon.Name = "MiniIcon"
+
+miniIcon.Size = UDim2.new(
+    0,
+    60,
+    0,
+    60
+)
+
+miniIcon.Position = UDim2.new(
+    0.02,
+    0,
+    1,
+    -75
+)
+
+miniIcon.BackgroundColor3 =
+    Color3.fromRGB(255, 255, 255)
+
+miniIcon.BackgroundTransparency = 0
+
+miniIcon.Image =
+    "https://img.wjwj.top/2026/09/06/b55182652732e280372cca9b2b9a23e5.jpg"
+
+miniIcon.ScaleType = Enum.ScaleType.Crop
+
+miniIcon.Visible = false
+
+miniIcon.ZIndex = 50
+
+miniIcon.Parent = screenGui
+
+-- 圆形
+local iconCorner = Instance.new("UICorner")
+iconCorner.CornerRadius = UDim.new(1, 0)
+iconCorner.Parent = miniIcon
+
+-- 白色边框
+local iconStroke = Instance.new("UIStroke")
+iconStroke.Color = Color3.fromRGB(255, 255, 255)
+iconStroke.Thickness = 2
+iconStroke.Parent = miniIcon
+
+--------------------------------------------------
+-- 缩小
+--------------------------------------------------
+
+local function minimize()
+
+    mainFrame.Visible = false
+
+    settingFrame.Visible = false
+
+    miniIcon.Visible = true
+
+end
+
+--------------------------------------------------
+-- 展开
+--------------------------------------------------
+
+local function expand()
+
+    mainFrame.Visible = true
+
+    miniIcon.Visible = false
+
+end
+
+--------------------------------------------------
+-- 缩小按钮
+--------------------------------------------------
+
+minimizeBtn.MouseButton1Click:Connect(
+    function()
+
+        minimize()
+
+    end
+)
+
+--------------------------------------------------
+-- 图标拖动
+--------------------------------------------------
+
+local iconDragging = false
+local iconDragStart
+local iconStartPos
+local iconWasDragged = false
+
+miniIcon.InputBegan:Connect(
+    function(input)
+
+        if
+            input.UserInputType ==
+            Enum.UserInputType.MouseButton1
+            or
+            input.UserInputType ==
+            Enum.UserInputType.Touch
+        then
+
+            iconDragging = true
+
+            iconWasDragged = false
+
+            iconDragStart =
+                input.Position
+
+            iconStartPos =
+                miniIcon.Position
+
+        end
+
+    end
+)
+
+UserInputService.InputChanged:Connect(
+    function(input)
+
+        if not iconDragging then
+            return
+        end
+
+        if
+            input.UserInputType ==
+            Enum.UserInputType.MouseMovement
+            or
+            input.UserInputType ==
+            Enum.UserInputType.Touch
+        then
+
+            local delta =
+                input.Position -
+                iconDragStart
+
+            if delta.Magnitude > 5 then
+                iconWasDragged = true
+            end
+
+            miniIcon.Position =
+                UDim2.new(
+                    iconStartPos.X.Scale,
+                    iconStartPos.X.Offset +
+                        delta.X,
+
+                    iconStartPos.Y.Scale,
+                    iconStartPos.Y.Offset +
+                        delta.Y
+                )
+
+        end
+
+    end
+)
+
+UserInputService.InputEnded:Connect(
+    function(input)
+
+        if not iconDragging then
+            return
+        end
+
+        if
+            input.UserInputType ==
+            Enum.UserInputType.MouseButton1
+            or
+            input.UserInputType ==
+            Enum.UserInputType.Touch
+        then
+
+            iconDragging = false
+
+            if not iconWasDragged then
+                expand()
+            end
+
+        end
+
+    end
+)
+
+print(
+    "脚本中心 - 一体式滚动版加载完成"
+)
