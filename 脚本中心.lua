@@ -298,7 +298,7 @@ local buttonData = {
             230
         ),
         script =
-        "https://raw.githubusercontent.com/caomod2077/Script/refs/heads/main/Fn-stealanegg.lua"
+        "https://raw.githubusercontent.com/342423114514/11/refs/heads/main/zxnb666qq122565661.lua"
     },
 
     {
