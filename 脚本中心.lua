@@ -561,14 +561,82 @@ for i, data in ipairs(buttonData) do
 end
 
 --------------------------------------------------
+-- 📂 脚本中心2（其他）标题
+--------------------------------------------------
+
+local center2Title = Instance.new("TextButton")
+
+center2Title.Size = UDim2.new(
+    0.8,
+    0,
+    0,
+    35
+)
+
+center2Title.Position = UDim2.new(
+    0.1,
+    0,
+    0,
+    520
+)
+
+center2Title.BackgroundTransparency = 1
+center2Title.AutoButtonColor = false
+center2Title.Text = "📂 脚本中心2（其他）  ▲"
+center2Title.TextColor3 = Color3.fromRGB(0, 0, 0)
+center2Title.TextScaled = true
+center2Title.Font = Enum.Font.GothamBold
+center2Title.ZIndex = 3
+center2Title.Parent = contentFrame
+
+--------------------------------------------------
+-- 脚本中心2（其他）按钮：XA中心
+--------------------------------------------------
+
+local center2Buttons = {}
+
+local xaBtn = Instance.new("TextButton")
+
+xaBtn.Size = UDim2.new(
+    0.8,
+    0,
+    0,
+    buttonHeight
+)
+
+xaBtn.Position = UDim2.new(
+    0.1,
+    0,
+    0,
+    564
+)
+
+xaBtn.BackgroundColor3 = Color3.fromRGB(80, 120, 220)
+xaBtn.Text = "🔷 XA中心"
+xaBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+xaBtn.TextScaled = true
+xaBtn.Font = Enum.Font.GothamSemibold
+xaBtn.AutoButtonColor = true
+xaBtn.ZIndex = 4
+xaBtn.Parent = contentFrame
+
+local xaCorner = Instance.new("UICorner")
+xaCorner.CornerRadius = UDim.new(0, 8)
+xaCorner.Parent = xaBtn
+
+center2Buttons[#center2Buttons + 1] = {
+    btn = xaBtn,
+    script = "https://raw.gitcode.com/Xingtaiduan/Scripts/raw/main/Loader.lua",
+    name = "XA中心"
+}
+
+--------------------------------------------------
 -- 更新滚动区域高度
 --------------------------------------------------
 
 local contentHeight =
-    firstButtonY +
-    #buttonData *
-    (buttonHeight + spacing) +
-    20
+    616
+
 
 contentFrame.Size =
     UDim2.new(
@@ -660,6 +728,21 @@ local function executeScript(
 end
 
 for _, item in ipairs(buttons) do
+
+    item.btn.MouseButton1Click:Connect(
+        function()
+
+            executeScript(
+                item.script,
+                item.name
+            )
+
+        end
+    )
+
+end
+
+for _, item in ipairs(center2Buttons) do
 
     item.btn.MouseButton1Click:Connect(
         function()
@@ -994,45 +1077,104 @@ for i, color in ipairs(colors) do
 end
 
 --------------------------------------------------
--- 📂 脚本中心折叠/展开
+-- 📂 脚本中心 / 脚本中心2（其他）折叠/展开
 --------------------------------------------------
+
 local scriptsExpanded = true
+local scripts2Expanded = true
 
-local function setScriptsExpanded(expanded)
-    scriptsExpanded = expanded
+local section1Height = 520
+local section2ExpandedHeight = 96
+local section2CollapsedHeight = 52
 
-    -- 文件夹收起时：下面所有脚本开关同时隐藏
+local function updateSections()
+    -- 脚本中心1按钮
     for _, item in ipairs(buttons) do
-        item.btn.Visible = expanded
+        item.btn.Visible = scriptsExpanded
     end
 
-    centerTitle.Text = expanded and "📂 脚本中心  ▲" or "📂 脚本中心  ▼"
+    -- 脚本中心2按钮
+    for _, item in ipairs(center2Buttons) do
+        item.btn.Visible = scripts2Expanded
+    end
 
-    -- 同步收缩内容区域和滚动区域，避免折叠后留下空白
-    local contentHeight = expanded and 520 or 100
+    -- 脚本中心1标题
+    centerTitle.Text =
+        scriptsExpanded and
+        "📂 脚本中心  ▲" or
+        "📂 脚本中心  ▼"
+
+    -- 脚本中心2跟随脚本中心1上下移动
+    local section2Y =
+        scriptsExpanded and 520 or 92
+
+    center2Title.Position = UDim2.new(
+        0.1,
+        0,
+        0,
+        section2Y
+    )
+
+    center2Title.Text =
+        scripts2Expanded and
+        "📂 脚本中心2（其他）  ▲" or
+        "📂 脚本中心2（其他）  ▼"
+
+    local xaY = section2Y + 44
+
+    xaBtn.Position = UDim2.new(
+        0.1,
+        0,
+        0,
+        xaY
+    )
+
+    -- 根据两个文件夹的状态重新计算内容高度
+    local totalHeight
+
+    if scriptsExpanded then
+        if scripts2Expanded then
+            totalHeight = 616
+        else
+            totalHeight = 572
+        end
+    else
+        if scripts2Expanded then
+            totalHeight = 188
+        else
+            totalHeight = 144
+        end
+    end
+
     contentFrame.Size = UDim2.new(
         1,
         -10,
         0,
-        contentHeight
+        totalHeight
     )
 
     mainFrame.CanvasSize = UDim2.new(
         0,
         0,
         0,
-        contentHeight
+        totalHeight
     )
 
-    -- 折叠时把滚动位置重置到顶部
-    if not expanded then
-        mainFrame.CanvasPosition = Vector2.new(0, 0)
-    end
+    -- 折叠后回到顶部，避免滚动位置异常
+    mainFrame.CanvasPosition = Vector2.new(0, 0)
 end
 
 centerTitle.MouseButton1Click:Connect(function()
-    setScriptsExpanded(not scriptsExpanded)
+    scriptsExpanded = not scriptsExpanded
+    updateSections()
 end)
+
+center2Title.MouseButton1Click:Connect(function()
+    scripts2Expanded = not scripts2Expanded
+    updateSections()
+end)
+
+updateSections()
 
 --------------------------------------------------
 -- 设置开关
