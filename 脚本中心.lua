@@ -631,11 +631,37 @@ center2Buttons[#center2Buttons + 1] = {
 }
 
 --------------------------------------------------
+-- 脚本中心2（其他）按钮：霖溺加载器
+--------------------------------------------------
+
+local linniBtn = Instance.new("TextButton")
+linniBtn.Size = UDim2.new(0.8, 0, 0, buttonHeight)
+linniBtn.Position = UDim2.new(0.1, 0, 0, 616)
+linniBtn.BackgroundColor3 = Color3.fromRGB(80, 170, 130)
+linniBtn.Text = "🌊 霖溺加载器"
+linniBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+linniBtn.TextScaled = true
+linniBtn.Font = Enum.Font.GothamSemibold
+linniBtn.AutoButtonColor = true
+linniBtn.ZIndex = 4
+linniBtn.Parent = contentFrame
+
+local linniCorner = Instance.new("UICorner")
+linniCorner.CornerRadius = UDim.new(0, 8)
+linniCorner.Parent = linniBtn
+
+center2Buttons[#center2Buttons + 1] = {
+    btn = linniBtn,
+    script = "https://raw.githubusercontent.com/ShenJiaoBen/ScriptLoader/refs/heads/main/Linni_FreeLoader.lua",
+    name = "霖溺加载器"
+}
+
+--------------------------------------------------
 -- 更新滚动区域高度
 --------------------------------------------------
 
 local contentHeight =
-    616
+    660
 
 
 contentFrame.Size =
@@ -1084,7 +1110,7 @@ local scriptsExpanded = true
 local scripts2Expanded = true
 
 local section1Height = 520
-local section2ExpandedHeight = 96
+local section2ExpandedHeight = 140
 local section2CollapsedHeight = 52
 
 local function updateSections()
@@ -1122,27 +1148,25 @@ local function updateSections()
 
     local xaY = section2Y + 44
 
-    xaBtn.Position = UDim2.new(
-        0.1,
-        0,
-        0,
-        xaY
-    )
+    xaBtn.Position = UDim2.new(0.1, 0, 0, xaY)
+
+    local linniY = section2Y + 96
+    linniBtn.Position = UDim2.new(0.1, 0, 0, linniY)
 
     -- 根据两个文件夹的状态重新计算内容高度
     local totalHeight
 
     if scriptsExpanded then
         if scripts2Expanded then
-            totalHeight = 616
+            totalHeight = 660
         else
-            totalHeight = 572
+            totalHeight = 616
         end
     else
         if scripts2Expanded then
-            totalHeight = 188
+            totalHeight = 232
         else
-            totalHeight = 144
+            totalHeight = 188
         end
     end
 
