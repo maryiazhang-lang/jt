@@ -363,7 +363,7 @@ minCorner.Parent = minimizeBtn
 -- 脚本中心标题
 --------------------------------------------------
 
-local centerTitle = Instance.new("TextLabel")
+local centerTitle = Instance.new("TextButton")
 
 centerTitle.Size = UDim2.new(
     0.8,
@@ -380,8 +380,9 @@ centerTitle.Position = UDim2.new(
 )
 
 centerTitle.BackgroundTransparency = 1
+centerTitle.AutoButtonColor = false
 
-centerTitle.Text = "📂 脚本中心"
+centerTitle.Text = "📂 脚本中心  ▲"
 
 centerTitle.TextColor3 =
     Color3.fromRGB(0, 0, 0)
@@ -487,17 +488,6 @@ local buttonData = {
         ),
         script =
         "https://raw.githubusercontent.com/xiaopi77/xiaopi77/main/QQ1002100032-Roblox-Pi-script.lua"
-    },
-
-    {
-        text = "👻 恐脚本",
-        color = Color3.fromRGB(
-            60,
-            60,
-            60
-        ),
-        script =
-        "https://raw.githubusercontent.com/kongbaNB/9178/refs/heads/main/恐脚本加载器"
     }
 }
 
@@ -695,7 +685,7 @@ settingFrame.Size =
         0,
         260,
         0,
-        200
+        230
     )
 
 settingFrame.Position =
@@ -898,6 +888,13 @@ local colors = {
         255,
         150,
         200
+    ),
+
+    -- 黑色
+    Color3.fromRGB(
+        0,
+        0,
+        0
     )
 }
 
@@ -995,6 +992,47 @@ for i, color in ipairs(colors) do
     )
 
 end
+
+--------------------------------------------------
+-- 📂 脚本中心折叠/展开
+--------------------------------------------------
+local scriptsExpanded = true
+
+local function setScriptsExpanded(expanded)
+    scriptsExpanded = expanded
+
+    -- 文件夹收起时：下面所有脚本开关同时隐藏
+    for _, item in ipairs(buttons) do
+        item.btn.Visible = expanded
+    end
+
+    centerTitle.Text = expanded and "📂 脚本中心  ▲" or "📂 脚本中心  ▼"
+
+    -- 同步收缩内容区域和滚动区域，避免折叠后留下空白
+    local contentHeight = expanded and 520 or 100
+    contentFrame.Size = UDim2.new(
+        1,
+        -10,
+        0,
+        contentHeight
+    )
+
+    mainFrame.CanvasSize = UDim2.new(
+        0,
+        0,
+        0,
+        contentHeight
+    )
+
+    -- 折叠时把滚动位置重置到顶部
+    if not expanded then
+        mainFrame.CanvasPosition = Vector2.new(0, 0)
+    end
+end
+
+centerTitle.MouseButton1Click:Connect(function()
+    setScriptsExpanded(not scriptsExpanded)
+end)
 
 --------------------------------------------------
 -- 设置开关
