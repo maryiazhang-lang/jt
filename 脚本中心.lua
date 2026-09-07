@@ -1001,19 +1001,30 @@ local scriptsExpanded = true
 local function setScriptsExpanded(expanded)
     scriptsExpanded = expanded
 
-    for _, btn in ipairs(buttons) do
-        btn.Visible = expanded
+    -- 文件夹收起时：下面所有脚本开关同时隐藏
+    for _, item in ipairs(buttons) do
+        item.btn.Visible = expanded
     end
 
     centerTitle.Text = expanded and "📂 脚本中心  ▲" or "📂 脚本中心  ▼"
+
+    -- 同步收缩内容区域和滚动区域，避免折叠后留下空白
+    local contentHeight = expanded and 520 or 100
+    contentFrame.Size = UDim2.new(
+        1,
+        -10,
+        0,
+        contentHeight
+    )
 
     mainFrame.CanvasSize = UDim2.new(
         0,
         0,
         0,
-        expanded and 520 or 100
+        contentHeight
     )
 
+    -- 折叠时把滚动位置重置到顶部
     if not expanded then
         mainFrame.CanvasPosition = Vector2.new(0, 0)
     end
