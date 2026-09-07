@@ -363,7 +363,7 @@ minCorner.Parent = minimizeBtn
 -- 脚本中心标题
 --------------------------------------------------
 
-local centerTitle = Instance.new("TextLabel")
+local centerTitle = Instance.new("TextButton")
 
 centerTitle.Size = UDim2.new(
     0.8,
@@ -380,8 +380,9 @@ centerTitle.Position = UDim2.new(
 )
 
 centerTitle.BackgroundTransparency = 1
+centerTitle.AutoButtonColor = false
 
-centerTitle.Text = "📂 脚本中心"
+centerTitle.Text = "📂 脚本中心  ▲"
 
 centerTitle.TextColor3 =
     Color3.fromRGB(0, 0, 0)
@@ -684,7 +685,7 @@ settingFrame.Size =
         0,
         260,
         0,
-        200
+        230
     )
 
 settingFrame.Position =
@@ -887,6 +888,13 @@ local colors = {
         255,
         150,
         200
+    ),
+
+    -- 黑色
+    Color3.fromRGB(
+        0,
+        0,
+        0
     )
 }
 
@@ -984,6 +992,36 @@ for i, color in ipairs(colors) do
     )
 
 end
+
+--------------------------------------------------
+-- 📂 脚本中心折叠/展开
+--------------------------------------------------
+local scriptsExpanded = true
+
+local function setScriptsExpanded(expanded)
+    scriptsExpanded = expanded
+
+    for _, btn in ipairs(buttons) do
+        btn.Visible = expanded
+    end
+
+    centerTitle.Text = expanded and "📂 脚本中心  ▲" or "📂 脚本中心  ▼"
+
+    mainFrame.CanvasSize = UDim2.new(
+        0,
+        0,
+        0,
+        expanded and 520 or 100
+    )
+
+    if not expanded then
+        mainFrame.CanvasPosition = Vector2.new(0, 0)
+    end
+end
+
+centerTitle.MouseButton1Click:Connect(function()
+    setScriptsExpanded(not scriptsExpanded)
+end)
 
 --------------------------------------------------
 -- 设置开关
