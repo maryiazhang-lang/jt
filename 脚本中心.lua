@@ -479,14 +479,14 @@ local buttonData = {
     },
 
     {
-        text = "👻 恐脚本",
+        text = "🥝 皮脚本",
         color = Color3.fromRGB(
             90,
             70,
             130
         ),
         script =
-        "https://raw.githubusercontent.com/kongbaNB/9178/refs/heads/main/恐脚本加载器"
+        'getgenv().XiaoPi="皮脚本QQ群1002100032" loadstring(game:HttpGet("https://raw.githubusercontent.com/xiaopi77/xiaopi77/main/QQ1002100032-Roblox-Pi-script.lua"))()'
     }
 }
 
