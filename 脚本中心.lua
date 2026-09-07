@@ -1,4 +1,4 @@
--- 脚本中心 - 一体式滚动版
+-- 鸡汤脚本 - 一体式滚动版
 -- 主窗口本身就是 ScrollingFrame
 -- 支持：整体滚动 / 拖动 / 缩小 / 小鸡图标 / 设置颜色
 
@@ -25,6 +25,116 @@ local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "脚本中心"
 screenGui.ResetOnSpawn = false
 screenGui.Parent = playerGui
+
+--------------------------------------------------
+-- 卡密验证
+-- 卡密：jbzx666
+--------------------------------------------------
+
+local KEY_PASSWORD = "jbzx666"
+
+local keyFrame = Instance.new("Frame")
+keyFrame.Name = "KeyFrame"
+keyFrame.Size = UDim2.new(0, 300, 0, 180)
+keyFrame.Position = UDim2.new(0.5, -150, 0.5, -90)
+keyFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+keyFrame.BorderSizePixel = 0
+keyFrame.ZIndex = 20
+keyFrame.Parent = screenGui
+
+local keyCorner = Instance.new("UICorner")
+keyCorner.CornerRadius = UDim.new(0, 12)
+keyCorner.Parent = keyFrame
+
+local keyStroke = Instance.new("UIStroke")
+keyStroke.Color = Color3.fromRGB(200, 200, 200)
+keyStroke.Thickness = 1
+keyStroke.Parent = keyFrame
+
+local keyTitle = Instance.new("TextLabel")
+keyTitle.Size = UDim2.new(1, -20, 0, 35)
+keyTitle.Position = UDim2.new(0, 10, 0, 12)
+keyTitle.BackgroundTransparency = 1
+keyTitle.Text = "🔐 卡密验证"
+keyTitle.TextColor3 = Color3.fromRGB(0, 0, 0)
+keyTitle.TextScaled = true
+keyTitle.Font = Enum.Font.GothamBold
+keyTitle.ZIndex = 21
+keyTitle.Parent = keyFrame
+
+local keyBox = Instance.new("TextBox")
+keyBox.Size = UDim2.new(1, -40, 0, 40)
+keyBox.Position = UDim2.new(0, 20, 0, 58)
+keyBox.BackgroundColor3 = Color3.fromRGB(240, 240, 240)
+keyBox.BorderSizePixel = 0
+keyBox.PlaceholderText = "请输入卡密"
+keyBox.Text = ""
+keyBox.TextColor3 = Color3.fromRGB(0, 0, 0)
+keyBox.TextScaled = true
+keyBox.Font = Enum.Font.Gotham
+keyBox.ClearTextOnFocus = false
+keyBox.ZIndex = 21
+keyBox.Parent = keyFrame
+
+local keyBoxCorner = Instance.new("UICorner")
+keyBoxCorner.CornerRadius = UDim.new(0, 8)
+keyBoxCorner.Parent = keyBox
+
+local verifyBtn = Instance.new("TextButton")
+verifyBtn.Size = UDim2.new(1, -40, 0, 40)
+verifyBtn.Position = UDim2.new(0, 20, 0, 110)
+verifyBtn.BackgroundColor3 = Color3.fromRGB(70, 150, 90)
+verifyBtn.BorderSizePixel = 0
+verifyBtn.Text = "验证卡密"
+verifyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+verifyBtn.TextScaled = true
+verifyBtn.Font = Enum.Font.GothamBold
+verifyBtn.AutoButtonColor = true
+verifyBtn.ZIndex = 21
+verifyBtn.Parent = keyFrame
+
+local verifyCorner = Instance.new("UICorner")
+verifyCorner.CornerRadius = UDim.new(0, 8)
+verifyCorner.Parent = verifyBtn
+
+local keyStatus = Instance.new("TextLabel")
+keyStatus.Size = UDim2.new(1, -40, 0, 22)
+keyStatus.Position = UDim2.new(0, 20, 0, 153)
+keyStatus.BackgroundTransparency = 1
+keyStatus.Text = ""
+keyStatus.TextColor3 = Color3.fromRGB(220, 50, 50)
+keyStatus.TextScaled = true
+keyStatus.Font = Enum.Font.Gotham
+keyStatus.ZIndex = 21
+keyStatus.Parent = keyFrame
+
+local verified = false
+
+local function verifyKey()
+    if keyBox.Text == KEY_PASSWORD then
+        verified = true
+        keyStatus.Text = "✅ 验证成功"
+        keyStatus.TextColor3 = Color3.fromRGB(50, 150, 70)
+        task.wait(0.35)
+        keyFrame:Destroy()
+    else
+        keyStatus.Text = "❌ 卡密错误"
+        keyBox.Text = ""
+    end
+end
+
+verifyBtn.MouseButton1Click:Connect(verifyKey)
+
+keyBox.FocusLost:Connect(function(enterPressed)
+    if enterPressed then
+        verifyKey()
+    end
+end)
+
+-- 未验证前不允许继续操作主界面
+while not verified do
+    task.wait()
+end
 
 --------------------------------------------------
 -- 主窗口
@@ -72,6 +182,7 @@ mainFrame.ClipsDescendants = true
 mainFrame.ZIndex = 1
 
 mainFrame.Parent = screenGui
+mainFrame.Visible = true
 
 --------------------------------------------------
 -- 圆角
@@ -365,6 +476,17 @@ local buttonData = {
         ),
         script =
         "https://raw.githubusercontent.com/qweroot/NH-/b43c7be49eca968f083d49a86000d626b63bb27c/NH%20%E8%84%9A%E6%9C%AC"
+    },
+
+    {
+        text = "👻 恐脚本",
+        color = Color3.fromRGB(
+            90,
+            70,
+            130
+        ),
+        script =
+        "https://raw.githubusercontent.com/kongbaNB/9178/refs/heads/main/恐脚本加载器"
     }
 }
 
