@@ -315,6 +315,92 @@ setCorner.CornerRadius = UDim.new(0, 6)
 setCorner.Parent = settingBtn
 
 --------------------------------------------------
+-- 关于作者按钮
+--------------------------------------------------
+
+local authorBtn = Instance.new("TextButton")
+
+authorBtn.Name = "AuthorButton"
+authorBtn.Size = UDim2.new(0, 30, 0, 30)
+authorBtn.Position = UDim2.new(0, 40, 0, 5)
+authorBtn.BackgroundColor3 = Color3.fromRGB(220, 220, 220)
+authorBtn.Text = "👤"
+authorBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
+authorBtn.TextScaled = true
+authorBtn.Font = Enum.Font.GothamBold
+authorBtn.AutoButtonColor = true
+authorBtn.ZIndex = 5
+authorBtn.Parent = contentFrame
+
+local authorCorner = Instance.new("UICorner")
+authorCorner.CornerRadius = UDim.new(0, 6)
+authorCorner.Parent = authorBtn
+
+local authorFrame = Instance.new("Frame")
+authorFrame.Name = "AuthorFrame"
+authorFrame.Size = UDim2.new(0, 280, 0, 150)
+authorFrame.Position = UDim2.new(0.5, -140, 0.5, -75)
+authorFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+authorFrame.BorderSizePixel = 0
+authorFrame.Visible = false
+authorFrame.ZIndex = 30
+authorFrame.Parent = screenGui
+
+local authorFrameCorner = Instance.new("UICorner")
+authorFrameCorner.CornerRadius = UDim.new(0, 12)
+authorFrameCorner.Parent = authorFrame
+
+local authorStroke = Instance.new("UIStroke")
+authorStroke.Color = Color3.fromRGB(200, 200, 200)
+authorStroke.Thickness = 1
+authorStroke.Parent = authorFrame
+
+local authorTitle = Instance.new("TextLabel")
+authorTitle.Size = UDim2.new(1, -50, 0, 40)
+authorTitle.Position = UDim2.new(0, 15, 0, 10)
+authorTitle.BackgroundTransparency = 1
+authorTitle.Text = "👤 关于作者"
+authorTitle.TextColor3 = Color3.fromRGB(0, 0, 0)
+authorTitle.TextScaled = true
+authorTitle.Font = Enum.Font.GothamBold
+authorTitle.ZIndex = 31
+authorTitle.Parent = authorFrame
+
+local authorText = Instance.new("TextLabel")
+authorText.Size = UDim2.new(1, -30, 0, 55)
+authorText.Position = UDim2.new(0, 15, 0, 55)
+authorText.BackgroundTransparency = 1
+authorText.Text = "作者很牛逼"
+authorText.TextColor3 = Color3.fromRGB(0, 0, 0)
+authorText.TextScaled = true
+authorText.Font = Enum.Font.GothamBold
+authorText.ZIndex = 31
+authorText.Parent = authorFrame
+
+local authorClose = Instance.new("TextButton")
+authorClose.Size = UDim2.new(0, 30, 0, 30)
+authorClose.Position = UDim2.new(1, -38, 0, 5)
+authorClose.BackgroundColor3 = Color3.fromRGB(235, 235, 235)
+authorClose.Text = "×"
+authorClose.TextColor3 = Color3.fromRGB(0, 0, 0)
+authorClose.TextScaled = true
+authorClose.Font = Enum.Font.GothamBold
+authorClose.ZIndex = 32
+authorClose.Parent = authorFrame
+
+local authorCloseCorner = Instance.new("UICorner")
+authorCloseCorner.CornerRadius = UDim.new(0, 6)
+authorCloseCorner.Parent = authorClose
+
+authorBtn.MouseButton1Click:Connect(function()
+    authorFrame.Visible = true
+end)
+
+authorClose.MouseButton1Click:Connect(function()
+    authorFrame.Visible = false
+end)
+
+--------------------------------------------------
 -- 缩小按钮
 --------------------------------------------------
 
@@ -1474,97 +1560,4 @@ local iconDragStart
 local iconStartPos
 local iconWasDragged = false
 
-miniIcon.InputBegan:Connect(
-    function(input)
-
-        if
-            input.UserInputType ==
-            Enum.UserInputType.MouseButton1
-            or
-            input.UserInputType ==
-            Enum.UserInputType.Touch
-        then
-
-            iconDragging = true
-
-            iconWasDragged = false
-
-            iconDragStart =
-                input.Position
-
-            iconStartPos =
-                miniIcon.Position
-
-        end
-
-    end
-)
-
-UserInputService.InputChanged:Connect(
-    function(input)
-
-        if not iconDragging then
-            return
-        end
-
-        if
-            input.UserInputType ==
-            Enum.UserInputType.MouseMovement
-            or
-            input.UserInputType ==
-            Enum.UserInputType.Touch
-        then
-
-            local delta =
-                input.Position -
-                iconDragStart
-
-            if delta.Magnitude > 5 then
-                iconWasDragged = true
-            end
-
-            miniIcon.Position =
-                UDim2.new(
-                    iconStartPos.X.Scale,
-                    iconStartPos.X.Offset +
-                        delta.X,
-
-                    iconStartPos.Y.Scale,
-                    iconStartPos.Y.Offset +
-                        delta.Y
-                )
-
-        end
-
-    end
-)
-
-UserInputService.InputEnded:Connect(
-    function(input)
-
-        if not iconDragging then
-            return
-        end
-
-        if
-            input.UserInputType ==
-            Enum.UserInputType.MouseButton1
-            or
-            input.UserInputType ==
-            Enum.UserInputType.Touch
-        then
-
-            iconDragging = false
-
-            if not iconWasDragged then
-                expand()
-            end
-
-        end
-
-    end
-)
-
-print(
-    "脚本中心 - 一体式滚动版加载完成"
-)
+miniIcon.InputBegan:Co
