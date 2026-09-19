@@ -1560,4 +1560,97 @@ local iconDragStart
 local iconStartPos
 local iconWasDragged = false
 
-miniIcon.InputBegan:Co
+miniIcon.InputBegan:Connect(
+    function(input)
+
+        if
+            input.UserInputType ==
+            Enum.UserInputType.MouseButton1
+            or
+            input.UserInputType ==
+            Enum.UserInputType.Touch
+        then
+
+            iconDragging = true
+
+            iconWasDragged = false
+
+            iconDragStart =
+                input.Position
+
+            iconStartPos =
+                miniIcon.Position
+
+        end
+
+    end
+)
+
+UserInputService.InputChanged:Connect(
+    function(input)
+
+        if not iconDragging then
+            return
+        end
+
+        if
+            input.UserInputType ==
+            Enum.UserInputType.MouseMovement
+            or
+            input.UserInputType ==
+            Enum.UserInputType.Touch
+        then
+
+            local delta =
+                input.Position -
+                iconDragStart
+
+            if delta.Magnitude > 5 then
+                iconWasDragged = true
+            end
+
+            miniIcon.Position =
+                UDim2.new(
+                    iconStartPos.X.Scale,
+                    iconStartPos.X.Offset +
+                        delta.X,
+
+                    iconStartPos.Y.Scale,
+                    iconStartPos.Y.Offset +
+                        delta.Y
+                )
+
+        end
+
+    end
+)
+
+UserInputService.InputEnded:Connect(
+    function(input)
+
+        if not iconDragging then
+            return
+        end
+
+        if
+            input.UserInputType ==
+            Enum.UserInputType.MouseButton1
+            or
+            input.UserInputType ==
+            Enum.UserInputType.Touch
+        then
+
+            iconDragging = false
+
+            if not iconWasDragged then
+                expand()
+            end
+
+        end
+
+    end
+)
+
+print(
+    "脚本中心 - 一体式滚动版加载完成"
+)
